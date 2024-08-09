@@ -3,10 +3,18 @@ services:
   database:
     restart: on-failure
     container_name: postgresql
-    image: 
+    image:
       postgres: alpine
     ports:
       - "5432:5432"
+
+  redis:
+    restart: on-failure
+    container_name: redis
+    image:
+      redis: 7.4.0
+    ports:
+      - "6379:6379"
 
   taskmanager:
     restart: on-failure
@@ -16,4 +24,4 @@ services:
       - "8080:8080"
     depends_on:
       - database
-    
+      - redis

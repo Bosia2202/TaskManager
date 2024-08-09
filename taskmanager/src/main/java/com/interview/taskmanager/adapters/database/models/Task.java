@@ -37,9 +37,11 @@ import lombok.NoArgsConstructor;
                                 @NamedAttributeNode("description"),
                                 @NamedAttributeNode("status"),
                                 @NamedAttributeNode("priority"),
+                                @NamedAttributeNode(value = "role", subgraph = "role-subgraph"),
                                 @NamedAttributeNode(value = "author", subgraph = "user-subgraph"),
                                 @NamedAttributeNode(value = "executors", subgraph = "executors-subgraph")
                 }, subgraphs = {
+                                @NamedSubgraph(name = "role-subgraph", attributeNodes = @NamedAttributeNode("name")),
                                 @NamedSubgraph(name = "user-subgraph", attributeNodes = @NamedAttributeNode("username")),
                                 @NamedSubgraph(name = "executors-subgraph", attributeNodes = @NamedAttributeNode("username"))
                 }),
@@ -49,10 +51,12 @@ import lombok.NoArgsConstructor;
                                 @NamedAttributeNode("description"),
                                 @NamedAttributeNode("status"),
                                 @NamedAttributeNode("priority"),
+                                @NamedAttributeNode(value = "role", subgraph = "role-subgraph"),
                                 @NamedAttributeNode(value = "author", subgraph = "user-subgraph"),
                                 @NamedAttributeNode(value = "executors", subgraph = "executors-subgraph"),
                                 @NamedAttributeNode(value = "comments", subgraph = "comment-subgraph")
                 }, subgraphs = {
+                                @NamedSubgraph(name = "role-subgraph", attributeNodes = @NamedAttributeNode("name")),
                                 @NamedSubgraph(name = "user-subgraph", attributeNodes = @NamedAttributeNode("username")),
                                 @NamedSubgraph(name = "executors-subgraph", attributeNodes = @NamedAttributeNode("username")),
                                 @NamedSubgraph(name = "comment-subgraph", attributeNodes = {
@@ -66,16 +70,23 @@ public class Task {
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
         private int id;
+
         private String title;
+
         private String description;
+
         private TaskStatus status;
+
         private TaskPriority priority;
+
         @ManyToOne(cascade = CascadeType.ALL)
         @JoinColumn(name = "author_id", nullable = false)
         private User author;
+
         @ManyToMany
         @JoinTable(name = "tasks_executors", joinColumns = @JoinColumn(name = "task_id"), inverseJoinColumns = @JoinColumn(name = "executor_id"))
         private Set<User> executors;
+
         @OneToMany(mappedBy = "task")
         private List<Comment> comment;
 
@@ -84,5 +95,15 @@ public class Task {
                 this.description = taskDetails.getDescription();
                 this.status = taskDetails.getStatus();
                 this.priority = taskDetails.getPriority();
+        }
+
+        public void addExecutor(User user) {
+                executors.add(user);
+        }
+
+        public void deleteExecutor(User user) {
+                if (!executors.isEmpty()) {
+                        executors.removeIf(u -> u.equals(user));
+                }
         }
 }
