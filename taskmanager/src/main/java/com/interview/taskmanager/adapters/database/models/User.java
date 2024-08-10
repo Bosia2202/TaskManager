@@ -7,15 +7,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.interview.taskmanager.adapters.security.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.NamedEntityGraphs;
@@ -67,22 +68,24 @@ public class User implements UserDetails {
         @Column(nullable = false)
         private String password;
 
-        @ManyToOne
-        @JoinColumn(name = "role_id", nullable = false)
+        @Enumerated(value = EnumType.STRING)
+        @Column(nullable = false)
         private Role role;
 
         @OneToMany(mappedBy = "author")
-        List<Task> ownerTasks;
+        private transient List<Task> ownerTasks;
 
         @ManyToMany(mappedBy = "executors")
-        List<Task> executedTasks;
+        private transient List<Task> executedTasks;
 
         @OneToMany(mappedBy = "author")
-        private List<Comment> comments;
+        private transient List<Comment> comments;
+
+        private String jwtToken;
 
         @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {
-                return List.of(new SimpleGrantedAuthority(role.getName()));
+                return List.of(new SimpleGrantedAuthority(role.name()));
         }
 
 }

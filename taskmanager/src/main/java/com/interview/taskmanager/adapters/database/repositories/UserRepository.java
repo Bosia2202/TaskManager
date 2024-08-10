@@ -1,9 +1,12 @@
 package com.interview.taskmanager.adapters.database.repositories;
 
 import com.interview.taskmanager.adapters.database.models.User;
+import com.interview.taskmanager.common.dto.UserProfile;
 
 public interface UserRepository {
     User findById(int id);
+
+    User findByEmail(String email);
   
     User findByIdWithTasks(int id);
 
@@ -26,5 +29,7 @@ public interface UserRepository {
     void updateUserPassword(int id, String newPassword);
 
     void createUser(User user);
+
+    UserProfile getUserProfile(Integer id);
 
 }

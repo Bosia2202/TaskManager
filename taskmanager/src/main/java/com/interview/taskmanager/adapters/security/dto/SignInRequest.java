@@ -1,9 +1,9 @@
-package com.interview.taskmanager.adapters.security;
+package com.interview.taskmanager.adapters.security.dto;
 
 import lombok.Data;
 
 @Data
 public class SignInRequest {
-    private String username;
+    private String email;
     private String password;
 }

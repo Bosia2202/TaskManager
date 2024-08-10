@@ -10,7 +10,10 @@ import com.interview.taskmanager.adapters.database.models.statuses.TaskStatus;
 import com.interview.taskmanager.common.dto.TaskDetails;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.JoinColumn;
@@ -37,11 +40,9 @@ import lombok.NoArgsConstructor;
                                 @NamedAttributeNode("description"),
                                 @NamedAttributeNode("status"),
                                 @NamedAttributeNode("priority"),
-                                @NamedAttributeNode(value = "role", subgraph = "role-subgraph"),
                                 @NamedAttributeNode(value = "author", subgraph = "user-subgraph"),
                                 @NamedAttributeNode(value = "executors", subgraph = "executors-subgraph")
                 }, subgraphs = {
-                                @NamedSubgraph(name = "role-subgraph", attributeNodes = @NamedAttributeNode("name")),
                                 @NamedSubgraph(name = "user-subgraph", attributeNodes = @NamedAttributeNode("username")),
                                 @NamedSubgraph(name = "executors-subgraph", attributeNodes = @NamedAttributeNode("username"))
                 }),
@@ -51,12 +52,10 @@ import lombok.NoArgsConstructor;
                                 @NamedAttributeNode("description"),
                                 @NamedAttributeNode("status"),
                                 @NamedAttributeNode("priority"),
-                                @NamedAttributeNode(value = "role", subgraph = "role-subgraph"),
                                 @NamedAttributeNode(value = "author", subgraph = "user-subgraph"),
                                 @NamedAttributeNode(value = "executors", subgraph = "executors-subgraph"),
                                 @NamedAttributeNode(value = "comments", subgraph = "comment-subgraph")
                 }, subgraphs = {
-                                @NamedSubgraph(name = "role-subgraph", attributeNodes = @NamedAttributeNode("name")),
                                 @NamedSubgraph(name = "user-subgraph", attributeNodes = @NamedAttributeNode("username")),
                                 @NamedSubgraph(name = "executors-subgraph", attributeNodes = @NamedAttributeNode("username")),
                                 @NamedSubgraph(name = "comment-subgraph", attributeNodes = {
@@ -71,12 +70,16 @@ public class Task {
         @GeneratedValue(strategy = GenerationType.AUTO)
         private int id;
 
+        @Column(nullable = false)
         private String title;
 
+        @Column(nullable = false)
         private String description;
 
+        @Enumerated(value = EnumType.ORDINAL)
         private TaskStatus status;
 
+        @Enumerated(value = EnumType.ORDINAL)
         private TaskPriority priority;
 
         @ManyToOne(cascade = CascadeType.ALL)
@@ -106,4 +109,5 @@ public class Task {
                         executors.removeIf(u -> u.equals(user));
                 }
         }
+
 }
