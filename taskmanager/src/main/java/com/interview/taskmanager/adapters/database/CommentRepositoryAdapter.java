@@ -6,13 +6,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.interview.taskmanager.adapters.database.models.Comment;
-import com.interview.taskmanager.adapters.database.repositories.CommentRepository;
+import com.interview.taskmanager.adapters.database.repositories.ICommentRepository;
 import com.interview.taskmanager.common.dto.CommentDetails;
 
 import jakarta.persistence.EntityNotFoundException;
 
 @Repository
-public class CommentRepositoryAdapter implements CommentRepository {
+public class CommentRepositoryAdapter implements ICommentRepository {
     private final JpaRepository<Comment, Integer> repository;
 
     public CommentRepositoryAdapter(JpaRepository<Comment, Integer> jpaRepository) {
@@ -36,7 +36,7 @@ public class CommentRepositoryAdapter implements CommentRepository {
 
     @Override
     @Transactional
-    public void updateComment(int commentId, CommentDetails commentDetails) {
+    public void updateComment(Integer commentId, CommentDetails commentDetails) {
         Comment comment = repository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Comment with id = '%d' doesn't found", commentId)));

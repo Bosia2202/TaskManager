@@ -3,25 +3,28 @@ services:
   database:
     restart: on-failure
     container_name: postgresql
-    image:
-      postgres: alpine
+    image: "postgres:16"
     ports:
       - "5432:5432"
+    environment:
+      POSTGRES_DB: taskmanagerdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  pgadmin:
+    restart: always
+    container_name: pgadmin
+    image: elestio/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@email.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 5050
+    ports:
+      - "5050:5050"
 
   redis:
     restart: on-failure
     container_name: redis
-    image:
-      redis: 7.4.0
+    image: "redis:7.4.0"
     ports:
       - "6379:6379"
-
-  taskmanager:
-    restart: on-failure
-    container_name: taskmanager
-    build: .
-    ports:
-      - "8080:8080"
-    depends_on:
-      - database
-      - redis

@@ -4,32 +4,35 @@ import com.interview.taskmanager.adapters.database.models.User;
 import com.interview.taskmanager.common.dto.UserProfile;
 
 public interface UserRepository {
-    User findById(int id);
+
+    void createUser(User user);
+
+    void updateUserUsername(Integer id, String newUsername);
+
+    void updateUserEmail(Integer id, String newEmail);
+
+    void updateUserPassword(Integer id, String newPassword);
+
+    void deleteUserById(Integer id);
+
+    void deleteUserByUsername(String name);
+
+    UserProfile getUserProfile(Integer id);
+
+    User getAuthorizationInfo(String email);
+
+    User findById(Integer id);
 
     User findByEmail(String email);
-  
-    User findByIdWithTasks(int id);
+
+    User findByIdWithTasks(Integer id);
 
     User findByUsernameWithTask(String username);
 
-    User findByIdWithComments(int id);
+    User findByIdWithComments(Integer id);
 
     User findByUsernameWithComments(String username);
 
     User findByUsername(String username);
-
-    void deleteUserById(int id);
-
-    void deleteUserByUsername(String name);
-
-    void updateUserUsername(int id, String newUsername);
-
-    void updateUserEmail(int id, String newEmail);
-
-    void updateUserPassword(int id, String newPassword);
-
-    void createUser(User user);
-
-    UserProfile getUserProfile(Integer id);
 
 }

@@ -6,10 +6,10 @@ import com.interview.taskmanager.adapters.database.models.Task;
 import com.interview.taskmanager.adapters.database.models.User;
 import com.interview.taskmanager.common.dto.TaskDetails;
 
-public interface TaskRepository {
-    Task findByIdBriefInfo(int id);
+public interface ITaskRepository {
+    Task findByIdBriefInfo(Integer id);
 
-    Task findByIdWithAllInfo(int id);
+    Task findByIdWithAllInfo(Integer id);
 
     public List<Task> findAllTasksByTitleBriefInfo(String title);
 

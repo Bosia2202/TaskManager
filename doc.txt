@@ -1,0 +1,14 @@
+  taskmanager:
+    restart: on-failure
+    container_name: taskmanager
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      POSTGRES_HOST: database
+      POSTGRES_PORT: 5432
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - database
+      - redis

@@ -7,7 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.interview.taskmanager.adapters.security.Role;
+import com.interview.taskmanager.infra.security.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,11 +29,20 @@ import lombok.Data;
 @Data
 @Table(name = "users")
 @NamedEntityGraphs(value = {
+
+                @NamedEntityGraph(name = "user-entity-authorize-graph", attributeNodes = {
+                                @NamedAttributeNode("id"),
+                                @NamedAttributeNode("email"),
+                                @NamedAttributeNode("username"),
+                                @NamedAttributeNode("password"),
+                                @NamedAttributeNode("role"),
+                }),
                 @NamedEntityGraph(name = "user-entity-with-tasks", attributeNodes = {
                                 @NamedAttributeNode("id"),
                                 @NamedAttributeNode("username"),
+                                @NamedAttributeNode("role"),
                                 @NamedAttributeNode(value = "ownerTasks", subgraph = "task-subgraph"),
-                                @NamedAttributeNode(value = "executedTask", subgraph = "task-subgraph"),
+                                @NamedAttributeNode(value = "executedTasks", subgraph = "task-subgraph"),
                 }, subgraphs = {
                                 @NamedSubgraph(name = "task-subgraph", attributeNodes = {
                                                 @NamedAttributeNode("id"),
@@ -46,6 +55,7 @@ import lombok.Data;
                 @NamedEntityGraph(name = "user-entity-with-comments", attributeNodes = {
                                 @NamedAttributeNode("id"),
                                 @NamedAttributeNode("username"),
+                                @NamedAttributeNode("role"),
                                 @NamedAttributeNode(value = "comments", subgraph = "comments-subgraph")
                 }, subgraphs = {
                                 @NamedSubgraph(name = "comments-subgraph", attributeNodes = {
@@ -59,11 +69,11 @@ public class User implements UserDetails {
         @GeneratedValue(strategy = GenerationType.AUTO)
         private Integer id;
 
-        @Column(unique = true, nullable = false, length = 50)
-        private String username;
-
         @Column(unique = true, nullable = false)
         private String email;
+
+        @Column(unique = true, nullable = false, length = 50)
+        private String username;
 
         @Column(nullable = false)
         private String password;
@@ -73,15 +83,13 @@ public class User implements UserDetails {
         private Role role;
 
         @OneToMany(mappedBy = "author")
-        private transient List<Task> ownerTasks;
+        private List<Task> ownerTasks;
 
         @ManyToMany(mappedBy = "executors")
-        private transient List<Task> executedTasks;
+        private List<Task> executedTasks;
 
         @OneToMany(mappedBy = "author")
-        private transient List<Comment> comments;
-
-        private String jwtToken;
+        private List<Comment> comments;
 
         @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {

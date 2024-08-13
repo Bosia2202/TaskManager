@@ -11,22 +11,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.interview.taskmanager.adapters.database.models.Task;
 import com.interview.taskmanager.adapters.database.models.User;
-import com.interview.taskmanager.adapters.database.repositories.TaskRepository;
+import com.interview.taskmanager.adapters.database.repositories.ITaskRepository;
 import com.interview.taskmanager.adapters.database.repositories.jpa.TaskJpaRepository;
 import com.interview.taskmanager.common.dto.TaskDetails;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Repository
 @AllArgsConstructor
-public class TaskRepositoryAdapter implements TaskRepository {
+@NoArgsConstructor
+public class TaskRepositoryAdapter implements ITaskRepository {
     private TaskJpaRepository repository;
 
     @Override
     @EntityGraph(value = "task-entity-graph-with-brief-information")
     @Cacheable(value = "tasks", key = "#id")
-    public Task findByIdBriefInfo(int id) {
+    public Task findByIdBriefInfo(Integer id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Task with id " + id + " doesn't found"));
     }
@@ -46,7 +48,7 @@ public class TaskRepositoryAdapter implements TaskRepository {
     @Override
     @EntityGraph(value = "task-entity-graph-with-all-information")
     @Cacheable(value = "tasks", key = "#id")
-    public Task findByIdWithAllInfo(int id) {
+    public Task findByIdWithAllInfo(Integer id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Task with id " + id + " doesn't found"));
     }

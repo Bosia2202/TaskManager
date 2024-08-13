@@ -3,8 +3,6 @@ package com.interview.taskmanager.adapters.database.models;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.data.annotation.Id;
-
 import com.interview.taskmanager.adapters.database.models.statuses.TaskPriority;
 import com.interview.taskmanager.adapters.database.models.statuses.TaskStatus;
 import com.interview.taskmanager.common.dto.TaskDetails;
@@ -16,6 +14,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -43,8 +42,12 @@ import lombok.NoArgsConstructor;
                                 @NamedAttributeNode(value = "author", subgraph = "user-subgraph"),
                                 @NamedAttributeNode(value = "executors", subgraph = "executors-subgraph")
                 }, subgraphs = {
-                                @NamedSubgraph(name = "user-subgraph", attributeNodes = @NamedAttributeNode("username")),
-                                @NamedSubgraph(name = "executors-subgraph", attributeNodes = @NamedAttributeNode("username"))
+                                @NamedSubgraph(name = "user-subgraph", attributeNodes = {
+                                        @NamedAttributeNode("id"),
+                                        @NamedAttributeNode("username") }),
+                                @NamedSubgraph(name = "executors-subgraph", attributeNodes = {
+                                        @NamedAttributeNode("id"),
+                                        @NamedAttributeNode("username") })
                 }),
                 @NamedEntityGraph(name = "task-entity-graph-with-all-information", attributeNodes = {
                                 @NamedAttributeNode("id"),
@@ -68,7 +71,7 @@ import lombok.NoArgsConstructor;
 public class Task {
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
-        private int id;
+        private Integer id;
 
         @Column(nullable = false)
         private String title;
@@ -91,7 +94,7 @@ public class Task {
         private Set<User> executors;
 
         @OneToMany(mappedBy = "task")
-        private List<Comment> comment;
+        private List<Comment> comments;
 
         public void setDetails(TaskDetails taskDetails) {
                 this.title = taskDetails.getTitle();

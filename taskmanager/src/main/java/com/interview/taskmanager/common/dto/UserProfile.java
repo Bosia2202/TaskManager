@@ -8,11 +8,10 @@ import lombok.Data;
 
 @Data
 public class UserProfile {
-
     private String username;
     private String email;
     List<TaskOwnerDto> tasks;
-
+    
     public UserProfile(User user) {
         TaskOwnerDtoMapper mapper = new TaskOwnerDtoMapper();
         this.username = user.getUsername();

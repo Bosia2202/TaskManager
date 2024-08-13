@@ -1,4 +1,4 @@
-package com.interview.taskmanager.adapters.security.dto;
+package com.interview.taskmanager.infra.security.dto;
 
 import lombok.Data;
 

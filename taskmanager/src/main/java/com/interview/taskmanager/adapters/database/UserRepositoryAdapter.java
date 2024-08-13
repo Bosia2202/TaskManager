@@ -15,81 +15,94 @@ import lombok.AllArgsConstructor;
 @Repository
 @AllArgsConstructor
 public class UserRepositoryAdapter implements UserRepository {
-    private UserJpaRepository repository;
+    private UserJpaRepository userJpaRepository;
 
     @Override
     @Transactional
     public void createUser(User user) {
-        repository.save(user);
+        userJpaRepository.save(user);
     }
 
     @Override
     @Transactional
-    public void updateUserUsername(int id, String newUsername) {
-        User user = repository.findById(id)
+    public void updateUserUsername(Integer id, String newUsername) {
+        User user = userJpaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format(
                         "User with id [id = %d] doesn't update. Update info [newUsername = '%s']", id, newUsername)));
         user.setUsername(newUsername);
-        repository.save(user);
+        userJpaRepository.save(user);
     }
 
     @Override
     @Transactional
-    public void updateUserEmail(int id, String newEmail) {
-        User user = repository.findById(id)
+    public void updateUserEmail(Integer id, String newEmail) {
+        User user = userJpaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String
                         .format("User with id [id = %d] doesn't update. Update info [newEmail = '%s']", id, newEmail)));
         user.setEmail(newEmail);
-        repository.save(user);
+        userJpaRepository.save(user);
     }
 
     @Override
     @Transactional
-    public void updateUserPassword(int id, String newPassword) {
-        User user = repository.findById(id)
+    public void updateUserPassword(Integer id, String newPassword) {
+        User user = userJpaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Password doesn't update"));
         user.setPassword(newPassword);
-        repository.save(user);
+        userJpaRepository.save(user);
     }
 
     @Override
     @Transactional
-    public void deleteUserById(int id) {
-        repository.deleteById(id);
+    public void deleteUserById(Integer id) {
+        userJpaRepository.deleteById(id);
     }
 
     @Override
     @Transactional
     public void deleteUserByUsername(String name) {
-        repository.deleteUserByUsername(name);
+        userJpaRepository.deleteUserByUsername(name);
     }
 
     @Override
-    public User findById(int id) {
-        return repository.findById(id)
+    public UserProfile getUserProfile(Integer id) {
+        User user = findById(id);
+        return new UserProfile(user);
+    }
+
+    @Override
+    @EntityGraph(value = "user-entity-authorize-graph")
+    public User getAuthorizationInfo(String email) {
+        return userJpaRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(
+                String.format("User with email [email = '%s'] wasn't found", email)));
+    }
+
+    @Override
+    public User findById(Integer id) {
+        return userJpaRepository.findById(id)
                 .orElseThrow(
                         () -> new EntityNotFoundException(String.format("User with id [id = %d] doesn't found", id)));
     }
 
     @Override
     @EntityGraph(value = "user-entity-with-tasks")
-    public User findByIdWithTasks(int id) {
-        return repository.findById(id)
+    public User findByIdWithTasks(Integer id) {
+        return userJpaRepository.findById(id)
                 .orElseThrow(
                         () -> new EntityNotFoundException(String.format("User with id [id = %d] doesn't found", id)));
     }
 
     @Override
     @EntityGraph(value = "user-entity-with-comments")
-    public User findByIdWithComments(int id) {
-        return repository.findById(id)
+    public User findByIdWithComments(Integer id) {
+        return userJpaRepository.findById(id)
                 .orElseThrow(
                         () -> new EntityNotFoundException(String.format("User with id [id = %d] doesn't found", id)));
     }
 
     @Override
     public User findByUsername(String username) {
-        return repository.findByUsername(username)
+        return userJpaRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("User with username [username = %s] doesn't found", username)));
     }
@@ -97,7 +110,7 @@ public class UserRepositoryAdapter implements UserRepository {
     @Override
     @EntityGraph(value = "user-entity-with-tasks")
     public User findByUsernameWithTask(String username) {
-        return repository.findByUsername(username)
+        return userJpaRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("User with username [username = %s] doesn't found", username)));
     }
@@ -105,21 +118,15 @@ public class UserRepositoryAdapter implements UserRepository {
     @Override
     @EntityGraph(value = "user-entity-with-comments")
     public User findByUsernameWithComments(String username) {
-        return repository.findByUsername(username)
+        return userJpaRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("User with username [username = %s] doesn't found", username)));
     }
 
     @Override
     public User findByEmail(String email) {
-        return repository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(
+        return userJpaRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(
                 String.format("User with email [email = '%s'] doesn't found", email)));
-    }
-
-    @Override
-    public UserProfile getUserProfile(Integer id) {
-        User user = findById(id);
-        return new UserProfile(user);
     }
 
 }
