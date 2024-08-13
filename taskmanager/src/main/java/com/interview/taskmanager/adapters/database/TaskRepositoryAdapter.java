@@ -17,11 +17,9 @@ import com.interview.taskmanager.common.dto.TaskDetails;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 @Repository
 @AllArgsConstructor
-@NoArgsConstructor
 public class TaskRepositoryAdapter implements ITaskRepository {
     private TaskJpaRepository repository;
 

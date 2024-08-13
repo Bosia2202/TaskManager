@@ -1,4 +1,4 @@
-package com.interview.taskmanager.infra.security;
+package com.interview.taskmanager.infra.security.authenticated;
 
 import com.interview.taskmanager.infra.security.dto.SignInRequest;
 import com.interview.taskmanager.infra.security.dto.SignUpRequest;

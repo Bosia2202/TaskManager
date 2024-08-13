@@ -2,6 +2,7 @@ package com.interview.taskmanager.adapters.database.repositories;
 
 import com.interview.taskmanager.adapters.database.models.User;
 import com.interview.taskmanager.common.dto.UserProfile;
+import com.interview.taskmanager.infra.security.authenticated.AuthenticatedUserDetails;
 
 public interface UserRepository {
 
@@ -19,7 +20,7 @@ public interface UserRepository {
 
     UserProfile getUserProfile(Integer id);
 
-    User getAuthorizationInfo(String email);
+    AuthenticatedUserDetails getAuthorizationInfo(String email);
 
     User findById(Integer id);
 

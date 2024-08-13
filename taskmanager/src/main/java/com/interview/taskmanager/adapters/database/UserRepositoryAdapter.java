@@ -7,6 +7,8 @@ import com.interview.taskmanager.adapters.database.models.User;
 import com.interview.taskmanager.adapters.database.repositories.UserRepository;
 import com.interview.taskmanager.adapters.database.repositories.jpa.UserJpaRepository;
 import com.interview.taskmanager.common.dto.UserProfile;
+import com.interview.taskmanager.infra.security.authenticated.AuthenticatedUserDetails;
+import com.interview.taskmanager.infra.security.authenticated.AuthenticatedUserDetailsMapper;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -72,9 +74,10 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     @EntityGraph(value = "user-entity-authorize-graph")
-    public User getAuthorizationInfo(String email) {
-        return userJpaRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(
+    public AuthenticatedUserDetails getAuthorizationInfo(String email) {
+        User foundUser = userJpaRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(
                 String.format("User with email [email = '%s'] wasn't found", email)));
+        return AuthenticatedUserDetailsMapper.toAuthenticatedUserDetails(foundUser);
     }
 
     @Override

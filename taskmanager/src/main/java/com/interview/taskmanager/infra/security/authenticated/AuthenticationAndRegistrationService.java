@@ -1,4 +1,4 @@
-package com.interview.taskmanager.infra.security;
+package com.interview.taskmanager.infra.security.authenticated;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,8 +14,10 @@ import com.interview.taskmanager.infra.security.dto.SignUpRequest;
 import com.interview.taskmanager.infra.security.jwt.JwtTokenService;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Service
+@Log4j2
 @AllArgsConstructor
 public class AuthenticationAndRegistrationService implements AuthenticationService {
 
@@ -38,7 +40,9 @@ public class AuthenticationAndRegistrationService implements AuthenticationServi
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 signInRequest.getEmail(), signInRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken); 
+        log.info(String.format("Context = [%s]", SecurityContextHolder.getContext()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        log.info(String.format("Context after write = [%s]", SecurityContextHolder.getContext()));
         return generateJwtToken(authentication);
     }
 
