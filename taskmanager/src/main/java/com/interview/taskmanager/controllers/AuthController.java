@@ -41,7 +41,7 @@ public class AuthController {
             log.info(String.format("User [email = '%s'] has authenticated", signInRequest.getEmail()));
             MultiValueMap<String, String> authenticationHeader = new HttpHeaders();
             authenticationHeader.add("Authorization", jwtToken);
-            return new ResponseEntity<>(authenticationHeader,HttpStatus.OK);
+            return new ResponseEntity<>(authenticationHeader, HttpStatus.OK);
         } catch (Exception e) {
             log.info(String.format("User [email = '%s'] wasn't authenticated. Error [message = %s]",
                     signInRequest.getEmail(), e.getMessage()));

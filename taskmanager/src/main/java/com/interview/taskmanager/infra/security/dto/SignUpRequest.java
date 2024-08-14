@@ -13,7 +13,7 @@ public class SignUpRequest {
     private String email;
     private CharSequence password;
 
-    public User extractUserFromSignUpRequest(PasswordEncoder passwordEncoder) {
+    public User buildUserFromSignUpRequest(PasswordEncoder passwordEncoder) {
         User registeredUser = new User();
         registeredUser.setEmail(email);
         registeredUser.setUsername(username);

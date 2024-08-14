@@ -31,7 +31,7 @@ public class AuthenticationAndRegistrationService implements AuthenticationServi
 
     @Override
     public void registrationUser(SignUpRequest signUpRequest) {
-        User registeredUser = signUpRequest.extractUserFromSignUpRequest(passwordEncoder);
+        User registeredUser = signUpRequest.buildUserFromSignUpRequest(passwordEncoder);
         userRepository.createUser(registeredUser);
     }
 
@@ -40,9 +40,7 @@ public class AuthenticationAndRegistrationService implements AuthenticationServi
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 signInRequest.getEmail(), signInRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken); 
-        log.info(String.format("Context = [%s]", SecurityContextHolder.getContext()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        log.info(String.format("Context after write = [%s]", SecurityContextHolder.getContext()));
         return generateJwtToken(authentication);
     }
 

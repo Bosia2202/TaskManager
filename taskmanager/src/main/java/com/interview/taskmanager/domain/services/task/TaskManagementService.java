@@ -4,8 +4,11 @@ import java.security.Principal;
 import java.util.List;
 
 import com.interview.taskmanager.common.dto.CommentDetails;
-import com.interview.taskmanager.common.dto.TaskDetails;
-import com.interview.taskmanager.common.dto.TaskFullInfoDto;
+import com.interview.taskmanager.common.dto.profile.OwnerTaskDto;
+import com.interview.taskmanager.common.dto.profile.UserProfile;
+import com.interview.taskmanager.common.dto.task.TaskBriefInfoDto;
+import com.interview.taskmanager.common.dto.task.TaskDetails;
+import com.interview.taskmanager.common.dto.task.TaskDto;
 
 public interface TaskManagementService {
 
@@ -19,16 +22,20 @@ public interface TaskManagementService {
 
     void deleteExecutor(Integer taskId, Integer userId, Principal currentUser);
 
-    TaskFullInfoDto findByIdWithAllInfo(Integer id);
+    TaskDto findById(Integer id);
 
-    public List<TaskDetails> findAllTasksByTitleBriefInfo(String title);
+    List<TaskBriefInfoDto> findAllTasksByTitle(String title);
 
-    public List<TaskDetails> getAssignedTasksList(Principal currentUser);
+    List<OwnerTaskDto> getAssignedTasksList(Principal currentUser);
 
-    void createComment(Integer taskId, CommentDetails commentDetails, Principal currentUser);
+    void createComment(CommentDetails commentDetails, Principal currentUser);
 
-    void updateComment(Integer taskId, Integer commentId, CommentDetails commentDetails, Principal currentUser);
+    void updateComment(Integer commentId, CommentDetails commentDetails, Principal currentUser);
 
     void deleteComment(Integer commentId, Principal currentUser);
+
+    UserProfile getUserProfileById(Integer id);
+
+    UserProfile getUserProfileByUsername(String username);
 
 }

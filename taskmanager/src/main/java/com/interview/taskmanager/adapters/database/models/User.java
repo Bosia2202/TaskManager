@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.interview.taskmanager.infra.security.Role;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -29,40 +30,39 @@ import lombok.Data;
 @Data
 @Table(name = "users")
 @NamedEntityGraphs(value = {
+        
+        @NamedEntityGraph(name = "user-entity-graph-authorize", attributeNodes = {
+                @NamedAttributeNode("id"),
+                @NamedAttributeNode("email"),
+                @NamedAttributeNode("username"),
+                @NamedAttributeNode("password"),
+                @NamedAttributeNode("role")
+        }),
 
-                @NamedEntityGraph(name = "user-entity-authorize-graph", attributeNodes = {
-                                @NamedAttributeNode("id"),
-                                @NamedAttributeNode("email"),
-                                @NamedAttributeNode("username"),
-                                @NamedAttributeNode("password"),
-                                @NamedAttributeNode("role"),
+        @NamedEntityGraph(name = "user-entity-graph", attributeNodes = {
+                @NamedAttributeNode("id"),
+                @NamedAttributeNode("username"),
+                @NamedAttributeNode(value = "ownerTasks", subgraph = "owner-task-subgraph"),
+                @NamedAttributeNode(value = "executedTasks", subgraph = "executed-task-subgraph")
+        }, subgraphs = {
+                @NamedSubgraph(name = "owner-task-subgraph", attributeNodes = {
+                        @NamedAttributeNode("id"),
+                        @NamedAttributeNode("title"),
+                        @NamedAttributeNode("status"),
+                        @NamedAttributeNode("priority")
                 }),
-                @NamedEntityGraph(name = "user-entity-with-tasks", attributeNodes = {
-                                @NamedAttributeNode("id"),
-                                @NamedAttributeNode("username"),
-                                @NamedAttributeNode("role"),
-                                @NamedAttributeNode(value = "ownerTasks", subgraph = "task-subgraph"),
-                                @NamedAttributeNode(value = "executedTasks", subgraph = "task-subgraph"),
-                }, subgraphs = {
-                                @NamedSubgraph(name = "task-subgraph", attributeNodes = {
-                                                @NamedAttributeNode("id"),
-                                                @NamedAttributeNode("title"),
-                                                @NamedAttributeNode("description"),
-                                                @NamedAttributeNode("status"),
-                                                @NamedAttributeNode("priority")
-                                })
+                @NamedSubgraph(name = "executed-task-subgraph", attributeNodes = {
+                        @NamedAttributeNode("id"),
+                        @NamedAttributeNode("title"),
+                        @NamedAttributeNode("status"),
+                        @NamedAttributeNode("priority"),
+                        @NamedAttributeNode(value = "author", subgraph = "author-subgraph")
                 }),
-                @NamedEntityGraph(name = "user-entity-with-comments", attributeNodes = {
-                                @NamedAttributeNode("id"),
-                                @NamedAttributeNode("username"),
-                                @NamedAttributeNode("role"),
-                                @NamedAttributeNode(value = "comments", subgraph = "comments-subgraph")
-                }, subgraphs = {
-                                @NamedSubgraph(name = "comments-subgraph", attributeNodes = {
-                                                @NamedAttributeNode("id"),
-                                                @NamedAttributeNode("content")
-                                })
+                @NamedSubgraph(name = "author-subgraph", attributeNodes = {
+                        @NamedAttributeNode("id"),
+                        @NamedAttributeNode("username")
                 })
+        })
 })
 public class User implements UserDetails {
         @Id
@@ -82,13 +82,13 @@ public class User implements UserDetails {
         @Column(nullable = false)
         private Role role;
 
-        @OneToMany(mappedBy = "author")
+        @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
         private List<Task> ownerTasks;
 
-        @ManyToMany(mappedBy = "executors")
+        @ManyToMany(cascade = CascadeType.ALL, mappedBy = "executors")
         private List<Task> executedTasks;
 
-        @OneToMany(mappedBy = "author")
+        @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
         private List<Comment> comments;
 
         @Override

@@ -1,4 +1,4 @@
-package com.interview.taskmanager.common.dto;
+package com.interview.taskmanager.common.dto.profile;
 
 import java.util.List;
 
@@ -8,12 +8,10 @@ import com.interview.taskmanager.adapters.database.models.statuses.TaskStatus;
 import lombok.Data;
 
 @Data
-public class TaskFullInfoDto {
-    private int id;
+public class OwnerTaskDto {
+    private Integer id;
     private String title;
-    private String description;
     private TaskStatus status;
     private TaskPriority priority;
-    private String author;
-    private List<String> executors;
+    private List<ExecutorDto> executors;
 }

@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import com.interview.taskmanager.adapters.database.repositories.UserRepository;
+import com.interview.taskmanager.adapters.database.UserRepositoryAdapter;
 
 import lombok.AllArgsConstructor;
 
@@ -13,11 +13,11 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UserDetailsProvider implements UserDetailsService {
 
-    private UserRepository repository;
+    private UserRepositoryAdapter userRepositoryAdapter;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return repository.getAuthorizationInfo(email);
+        return userRepositoryAdapter.getAuthorizationInfo(email);
     }
 
 }

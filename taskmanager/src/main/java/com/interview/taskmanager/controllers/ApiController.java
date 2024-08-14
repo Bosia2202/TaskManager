@@ -4,8 +4,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interview.taskmanager.common.dto.CommentDetails;
-import com.interview.taskmanager.common.dto.TaskDetails;
-import com.interview.taskmanager.common.dto.TaskFullInfoDto;
+import com.interview.taskmanager.common.dto.profile.OwnerTaskDto;
+import com.interview.taskmanager.common.dto.profile.UserProfile;
+import com.interview.taskmanager.common.dto.task.TaskBriefInfoDto;
+import com.interview.taskmanager.common.dto.task.TaskDetails;
+import com.interview.taskmanager.common.dto.task.TaskDto;
 import com.interview.taskmanager.domain.services.task.TaskManagementService;
 
 import java.security.Principal;
@@ -63,33 +66,32 @@ public class ApiController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/task/search")
-    public ResponseEntity<TaskFullInfoDto> searchById(@RequestParam("id") Integer id) {
-        return new ResponseEntity<>(taskManagementService.findByIdWithAllInfo(id), HttpStatus.OK);
+    @GetMapping("/task/find")
+    public ResponseEntity<TaskDto> findById(@RequestParam("id") Integer id) {
+        return new ResponseEntity<>(taskManagementService.findById(id), HttpStatus.OK);
     }
 
-    @GetMapping("/task/searchAll")
-    public ResponseEntity<List<TaskDetails>> searchByTitle(@RequestParam("title") String title) {
-        return new ResponseEntity<>(taskManagementService.findAllTasksByTitleBriefInfo(title), HttpStatus.OK);
+    @GetMapping("/task/findAll")
+    public ResponseEntity<List<TaskBriefInfoDto>> searchByTitle(@RequestParam("title") String title) {
+        return new ResponseEntity<>(taskManagementService.findAllTasksByTitle(title), HttpStatus.OK);
     }
 
     @GetMapping("/task/myTask")
-    public ResponseEntity<List<TaskDetails>> getUserTask(Principal principal) {
+    public ResponseEntity<List<OwnerTaskDto>> getUserTask(Principal principal) {
         return new ResponseEntity<>(taskManagementService.getAssignedTasksList(principal), HttpStatus.OK);
     }
 
     @PutMapping("/comment/create")
-    public ResponseEntity<HttpStatus> createComment(@RequestParam("taskId") Integer taskId,
-            @RequestBody CommentDetails commentDetails, Principal principal) {
-        taskManagementService.createComment(taskId, commentDetails, principal);
+    public ResponseEntity<HttpStatus> createComment(@RequestBody CommentDetails commentDetails, Principal principal) {
+        taskManagementService.createComment(commentDetails, principal);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/comment/update")
-    public ResponseEntity<HttpStatus> updateComment(@RequestParam("taskId") Integer taskId,
-            @RequestParam("commentId") Integer commentId, @RequestBody CommentDetails commentDetails,
+    public ResponseEntity<HttpStatus> updateComment(@RequestParam("commentId") Integer commentId,
+            @RequestBody CommentDetails commentDetails,
             Principal principal) {
-        taskManagementService.updateComment(taskId, commentId, commentDetails, principal);
+        taskManagementService.updateComment(commentId, commentDetails, principal);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -97,6 +99,16 @@ public class ApiController {
     public ResponseEntity<HttpStatus> deleteComment(@RequestParam("commentId") Integer commentId, Principal principal) {
         taskManagementService.deleteComment(commentId, principal);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("user/")
+    public ResponseEntity<UserProfile> getUserProfileById(@RequestParam("id") Integer id) {
+        return new ResponseEntity<>(taskManagementService.getUserProfileById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("user/")
+    public ResponseEntity<UserProfile> getUserProfileByUsername(@RequestParam("name") String username) {
+        return new ResponseEntity<>(taskManagementService.getUserProfileByUsername(username), HttpStatus.OK);
     }
 
 }

@@ -1,16 +1,15 @@
-package com.interview.taskmanager.common.dto;
+package com.interview.taskmanager.common.dto.profile;
 
 import com.interview.taskmanager.adapters.database.models.statuses.TaskPriority;
 import com.interview.taskmanager.adapters.database.models.statuses.TaskStatus;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@AllArgsConstructor
 @Data
-public class TaskDetails {
+public class ExecutedTaskDto {
+    private Integer id;
     private String title;
-    private String description;
     private TaskStatus status;
     private TaskPriority priority;
+    private AuthorDto author;
 }

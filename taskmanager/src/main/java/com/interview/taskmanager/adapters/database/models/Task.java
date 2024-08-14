@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.interview.taskmanager.adapters.database.models.statuses.TaskPriority;
 import com.interview.taskmanager.adapters.database.models.statuses.TaskStatus;
-import com.interview.taskmanager.common.dto.TaskDetails;
+import com.interview.taskmanager.common.dto.task.TaskDetails;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -33,38 +33,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "tasks")
 @NamedEntityGraphs(value = {
-                @NamedEntityGraph(name = "task-entity-graph-with-brief-information", attributeNodes = {
-                                @NamedAttributeNode("id"),
-                                @NamedAttributeNode("title"),
-                                @NamedAttributeNode("description"),
-                                @NamedAttributeNode("status"),
-                                @NamedAttributeNode("priority"),
-                                @NamedAttributeNode(value = "author", subgraph = "user-subgraph"),
-                                @NamedAttributeNode(value = "executors", subgraph = "executors-subgraph")
-                }, subgraphs = {
-                                @NamedSubgraph(name = "user-subgraph", attributeNodes = {
-                                        @NamedAttributeNode("id"),
-                                        @NamedAttributeNode("username") }),
-                                @NamedSubgraph(name = "executors-subgraph", attributeNodes = {
-                                        @NamedAttributeNode("id"),
-                                        @NamedAttributeNode("username") })
-                }),
-                @NamedEntityGraph(name = "task-entity-graph-with-all-information", attributeNodes = {
-                                @NamedAttributeNode("id"),
-                                @NamedAttributeNode("title"),
-                                @NamedAttributeNode("description"),
-                                @NamedAttributeNode("status"),
-                                @NamedAttributeNode("priority"),
-                                @NamedAttributeNode(value = "author", subgraph = "user-subgraph"),
-                                @NamedAttributeNode(value = "executors", subgraph = "executors-subgraph"),
-                                @NamedAttributeNode(value = "comments", subgraph = "comment-subgraph")
-                }, subgraphs = {
-                                @NamedSubgraph(name = "user-subgraph", attributeNodes = @NamedAttributeNode("username")),
-                                @NamedSubgraph(name = "executors-subgraph", attributeNodes = @NamedAttributeNode("username")),
-                                @NamedSubgraph(name = "comment-subgraph", attributeNodes = {
-                                                @NamedAttributeNode("content"),
-                                                @NamedAttributeNode(value = "author", subgraph = "user-subgraph")
-                                })
+        @NamedEntityGraph(name = "task-entity-graph", attributeNodes = {
+                @NamedAttributeNode("id"),
+                @NamedAttributeNode("title"),
+                @NamedAttributeNode("description"),
+                @NamedAttributeNode("status"),
+                @NamedAttributeNode("priority"),
+                @NamedAttributeNode(value = "author", subgraph = "user-subgraph"),
+                @NamedAttributeNode(value = "executors", subgraph = "executors-subgraph"),
+                @NamedAttributeNode(value = "comments", subgraph = "comment-subgraph")
+        }, subgraphs = {
+                @NamedSubgraph(name = "user-subgraph", attributeNodes = {
+                        @NamedAttributeNode("id"),
+                        @NamedAttributeNode("username")}) ,
+                @NamedSubgraph(name = "executors-subgraph", attributeNodes = {
+                        @NamedAttributeNode("id"),
+                        @NamedAttributeNode("username")}),
+                @NamedSubgraph(name = "comment-subgraph", attributeNodes = {
+                        @NamedAttributeNode("content"),
+                        @NamedAttributeNode(value = "author", subgraph = "user-subgraph")})
                 })
 })
 
@@ -85,7 +72,7 @@ public class Task {
         @Enumerated(value = EnumType.ORDINAL)
         private TaskPriority priority;
 
-        @ManyToOne(cascade = CascadeType.ALL)
+        @ManyToOne
         @JoinColumn(name = "author_id", nullable = false)
         private User author;
 
@@ -93,7 +80,7 @@ public class Task {
         @JoinTable(name = "tasks_executors", joinColumns = @JoinColumn(name = "task_id"), inverseJoinColumns = @JoinColumn(name = "executor_id"))
         private Set<User> executors;
 
-        @OneToMany(mappedBy = "task")
+        @OneToMany(cascade = CascadeType.ALL, mappedBy = "task")
         private List<Comment> comments;
 
         public void setDetails(TaskDetails taskDetails) {

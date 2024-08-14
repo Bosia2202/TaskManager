@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import com.google.common.cache.CacheBuilder;
 
 @Configuration
-public class CashConfig {
+public class CacheConfig {
 
     @Bean
     public CacheManager cacheManager() {

@@ -4,6 +4,7 @@
         "сomment",
         "Cacheable",
         "Configurer",
+        "Hmac",
         "Jwts",
         "Servlet",
         "taskmanager",

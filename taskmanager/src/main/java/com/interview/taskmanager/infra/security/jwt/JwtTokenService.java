@@ -12,4 +12,5 @@ public interface JwtTokenService {
     public String extractUsername(String token);
 
     public String extractEmail(String token);
+    
 }

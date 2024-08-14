@@ -1,6 +1,4 @@
-package com.interview.taskmanager.common.dto;
-
-import java.util.List;
+package com.interview.taskmanager.common.dto.task;
 
 import com.interview.taskmanager.adapters.database.models.statuses.TaskPriority;
 import com.interview.taskmanager.adapters.database.models.statuses.TaskStatus;
@@ -8,11 +6,9 @@ import com.interview.taskmanager.adapters.database.models.statuses.TaskStatus;
 import lombok.Data;
 
 @Data
-public class TaskOwnerDto {
-    private int id;
+public class TaskBriefInfoDto {
+    private Integer id;
     private String title;
-    private String description;
     private TaskStatus status;
     private TaskPriority priority;
-    private List<String> executors;
 }

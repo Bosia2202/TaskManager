@@ -53,7 +53,6 @@ public class Comment {
 
     public void setDetails(CommentDetails commentDetails){
         this.content = commentDetails.getContent();
-        this.author = commentDetails.getAuthor();
     }
 
 }

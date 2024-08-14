@@ -1,52 +1,16 @@
 package com.interview.taskmanager.adapters.database;
 
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.interview.taskmanager.adapters.database.models.Comment;
-import com.interview.taskmanager.adapters.database.repositories.ICommentRepository;
 import com.interview.taskmanager.common.dto.CommentDetails;
 
-import jakarta.persistence.EntityNotFoundException;
+public interface CommentRepositoryAdapter {
 
-@Repository
-public class CommentRepositoryAdapter implements ICommentRepository {
-    private final JpaRepository<Comment, Integer> repository;
+    void createComment(Comment comment);
 
-    public CommentRepositoryAdapter(JpaRepository<Comment, Integer> jpaRepository) {
-        this.repository = jpaRepository;
-    }
+    void updateComment(Integer id, CommentDetails commentDetails);
 
-    @Override
-    @EntityGraph(value = "comment-entity-information")
-    @Transactional(readOnly = true)
-    public Comment findCommentById(int commentId) {
-        return repository.findById(commentId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Comment with id = '%d' doesn't found", commentId)));
-    }
+    void deleteComment(Integer id);
 
-    @Override
-    @Transactional
-    public void deleteComment(Comment comment) {
-        repository.deleteById(comment.getId());
-    }
-
-    @Override
-    @Transactional
-    public void updateComment(Integer commentId, CommentDetails commentDetails) {
-        Comment comment = repository.findById(commentId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Comment with id = '%d' doesn't found", commentId)));
-        comment.setDetails(commentDetails);
-        repository.save(comment);
-    }
-
-    @Override
-    public void createComment(Comment comment) {
-        repository.save(comment);
-    }
+    Comment findCommentById(Integer id);
 
 }
