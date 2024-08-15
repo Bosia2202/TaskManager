@@ -13,8 +13,6 @@ public class OwnerTaskDtoMapper {
         dto.setTitle(task.getTitle());
         dto.setPriority(task.getPriority());
         dto.setStatus(task.getStatus());
-        dto.setExecutors(task.getExecutors().stream().map(streamExecutor -> 
-            new ExecutorDto(streamExecutor.getId(),streamExecutor.getUsername())).toList());
         return dto;
     }
 }

@@ -39,24 +39,16 @@ import lombok.Data;
                 @NamedAttributeNode("role")
         }),
 
-        @NamedEntityGraph(name = "user-entity-graph", attributeNodes = {
+        @NamedEntityGraph(name = "user-entity-graph-with-owner-task", attributeNodes = {
                 @NamedAttributeNode("id"),
                 @NamedAttributeNode("username"),
                 @NamedAttributeNode(value = "ownerTasks", subgraph = "owner-task-subgraph"),
-                @NamedAttributeNode(value = "executedTasks", subgraph = "executed-task-subgraph")
         }, subgraphs = {
                 @NamedSubgraph(name = "owner-task-subgraph", attributeNodes = {
                         @NamedAttributeNode("id"),
                         @NamedAttributeNode("title"),
                         @NamedAttributeNode("status"),
                         @NamedAttributeNode("priority")
-                }),
-                @NamedSubgraph(name = "executed-task-subgraph", attributeNodes = {
-                        @NamedAttributeNode("id"),
-                        @NamedAttributeNode("title"),
-                        @NamedAttributeNode("status"),
-                        @NamedAttributeNode("priority"),
-                        @NamedAttributeNode(value = "author", subgraph = "author-subgraph")
                 }),
                 @NamedSubgraph(name = "author-subgraph", attributeNodes = {
                         @NamedAttributeNode("id"),

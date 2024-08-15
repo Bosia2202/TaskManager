@@ -1,23 +1,37 @@
 package com.interview.taskmanager.adapters.database.repositories;
 
-import org.springframework.data.jpa.repository.EntityGraph;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.interview.taskmanager.adapters.database.UserRepositoryAdapter;
+import com.interview.taskmanager.adapters.database.models.Task;
 import com.interview.taskmanager.adapters.database.models.User;
 import com.interview.taskmanager.adapters.database.repositories.jpa.UserJpaRepository;
 import com.interview.taskmanager.common.dto.profile.UserProfile;
 import com.interview.taskmanager.infra.security.authenticated.AuthenticatedUserDetails;
 import com.interview.taskmanager.infra.security.authenticated.AuthenticatedUserDetailsMapper;
 
+import jakarta.persistence.EntityGraph;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Repository
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Log4j2
 public class UserRepository implements UserRepositoryAdapter {
-    private UserJpaRepository userJpaRepository;
+
+    private final UserJpaRepository userJpaRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     @Transactional
@@ -67,7 +81,6 @@ public class UserRepository implements UserRepositoryAdapter {
     }
 
     @Override
-    @EntityGraph(value = "user-entity-graph-authorize")
     @Transactional(readOnly = true)
     public AuthenticatedUserDetails getAuthorizationInfo(String email) throws EntityNotFoundException {
         User foundUser = userJpaRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(
@@ -76,7 +89,6 @@ public class UserRepository implements UserRepositoryAdapter {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public User findById(Integer id) throws EntityNotFoundException {
         return userJpaRepository.findById(id)
                 .orElseThrow(
@@ -84,7 +96,6 @@ public class UserRepository implements UserRepositoryAdapter {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public User findByUsername(String username) {
         return userJpaRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -99,21 +110,59 @@ public class UserRepository implements UserRepositoryAdapter {
     }
 
     @Override
-    @EntityGraph(value = "user-entity-graph")
     @Transactional(readOnly = true)
-    public UserProfile findUserProfileById(Integer id) throws EntityNotFoundException {
-        User user = userJpaRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(String.format("User [id = %d] wasn't found", id)));
-        return new UserProfile(user);
+    public UserProfile findUserProfileById(Integer id) throws NoResultException {
+        User user = userJpaRepository.findById(id).orElseThrow(() -> new NoResultException());
+        List<Task> ownerTasks = getOwnerTasksByUserId(id);
+        List<Task> executedTasks = getExecutedTasksByUserId(id);
+        return new UserProfile(user, ownerTasks, executedTasks);
     }
 
     @Override
-    @EntityGraph(value = "user-entity-graph")
     @Transactional(readOnly = true)
-    public UserProfile findUserProfileByUsername(String username) throws EntityNotFoundException {
-        User user = userJpaRepository.findByUsername(username).orElseThrow(
-                () -> new EntityNotFoundException(String.format("User [username = %s] wasn't found", username)));
-        return new UserProfile(user);
+    public UserProfile findUserProfileByUsername(String username) throws NoResultException {
+        User user = userJpaRepository.findByUsername(username).orElseThrow(() -> new NoResultException());
+        List<Task> ownerTasks = getOwnerTasksByUsername(username);
+        List<Task> executedTasks = getExecutedTasksByUsername(username);
+        return new UserProfile(user, ownerTasks, executedTasks);
+    }
+
+    @Override
+    public User findUserWithAssignedTasksByUsername(String username) throws NoResultException {
+        EntityGraph entityGraph = entityManager.getEntityGraph("user-entity-graph-with-owner-task");
+        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.username = :username",
+                User.class);
+        query.setParameter("username", username);
+        query.setHint("jakarta.persistence.fetchgraph", entityGraph);
+        return query.getSingleResult();
+    }
+
+    private List<Task> getOwnerTasksByUserId(Integer id) {
+        TypedQuery<Task> ownerTasksQuery = entityManager.createQuery(
+                "SELECT t FROM Task t WHERE t.author.id = :id", Task.class);
+        ownerTasksQuery.setParameter("id", id);
+        return ownerTasksQuery.getResultList();
+    }
+
+    private List<Task> getExecutedTasksByUserId(Integer id) {
+        TypedQuery<Task> executedTasksQuery = entityManager.createQuery(
+                "SELECT t FROM Task t JOIN FETCH t.executors e WHERE e.id = :id", Task.class);
+        executedTasksQuery.setParameter("id", id);
+        return executedTasksQuery.getResultList();
+    }
+
+    private List<Task> getOwnerTasksByUsername(String username) {
+        TypedQuery<Task> ownerTasksQuery = entityManager.createQuery(
+            "SELECT t FROM Task t WHERE t.author.username = :username", Task.class);
+        ownerTasksQuery.setParameter("username", username);
+        return ownerTasksQuery.getResultList();
+    }
+
+    private List<Task> getExecutedTasksByUsername(String username) {
+        TypedQuery<Task> executedTasksQuery = entityManager.createQuery(
+            "SELECT t FROM Task t JOIN FETCH t.executors e WHERE e.username = :username", Task.class);
+        executedTasksQuery.setParameter("username", username);
+        return executedTasksQuery.getResultList();
     }
 
 }

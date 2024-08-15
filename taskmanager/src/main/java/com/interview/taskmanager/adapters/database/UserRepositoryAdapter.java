@@ -1,9 +1,12 @@
 package com.interview.taskmanager.adapters.database;
 
+import org.springframework.stereotype.Repository;
+
 import com.interview.taskmanager.adapters.database.models.User;
 import com.interview.taskmanager.common.dto.profile.UserProfile;
 import com.interview.taskmanager.infra.security.authenticated.AuthenticatedUserDetails;
 
+@Repository
 public interface UserRepositoryAdapter {
 
     void createUser(User user);
@@ -29,5 +32,7 @@ public interface UserRepositoryAdapter {
     UserProfile findUserProfileById(Integer id);
 
     UserProfile findUserProfileByUsername(String username);
+
+    User findUserWithAssignedTasksByUsername(String username);
 
 }

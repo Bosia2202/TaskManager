@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 public class TaskDetails {
-    private Integer id;
     private String title;
     private String description;
     private TaskStatus status;

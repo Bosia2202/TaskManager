@@ -23,10 +23,12 @@ import com.interview.taskmanager.common.dto.task.TaskDto;
 import com.interview.taskmanager.common.dto.task.TaskDtoMapper;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Service
 @Log4j2
+@AllArgsConstructor
 public class TaskOperation implements TaskManagementService {
 
     private UserRepositoryAdapter userRepositoryAdapter;
@@ -111,7 +113,7 @@ public class TaskOperation implements TaskManagementService {
     @Override
     public List<OwnerTaskDto> getAssignedTasksList(Principal currentUser) throws EntityNotFoundException {
         log.info(String.format("Get assigned tasks by user = '%s'", currentUser.getName()));
-        User user = userRepositoryAdapter.findByUsername(currentUser.getName());
+        User user = userRepositoryAdapter.findUserWithAssignedTasksByUsername(currentUser.getName());
         return user.getOwnerTasks().stream().map(OwnerTaskDtoMapper::toDto)
                 .toList();
     }

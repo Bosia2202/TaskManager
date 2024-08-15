@@ -2,12 +2,15 @@ package com.interview.taskmanager.adapters.database;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import com.interview.taskmanager.adapters.database.models.Task;
 import com.interview.taskmanager.adapters.database.models.User;
 import com.interview.taskmanager.common.dto.task.TaskDetails;
 
 import jakarta.persistence.EntityNotFoundException;
 
+@Repository
 public interface TaskRepositoryAdapter {
     
     Task findById(Integer id) throws EntityNotFoundException;

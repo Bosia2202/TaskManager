@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,7 +57,7 @@ public class ApiController {
     public ResponseEntity<HttpStatus> addExecutor(@RequestParam("taskId") Integer taskId,
             @RequestParam("executorId") Integer executorId, Principal principal) {
         taskManagementService.addExecutor(taskId, executorId, principal);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK); //TODO: Сделать добавление исполнителей
     }
 
     @DeleteMapping("task/executor/delete")
@@ -101,14 +102,14 @@ public class ApiController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("user/")
-    public ResponseEntity<UserProfile> getUserProfileById(@RequestParam("id") Integer id) {
-        return new ResponseEntity<>(taskManagementService.getUserProfileById(id), HttpStatus.OK);
-    }
-
-    @GetMapping("user/")
-    public ResponseEntity<UserProfile> getUserProfileByUsername(@RequestParam("name") String username) {
-        return new ResponseEntity<>(taskManagementService.getUserProfileByUsername(username), HttpStatus.OK);
+    @GetMapping("user/{param}")
+    public ResponseEntity<UserProfile> getUserProfile(@PathVariable("param") String param) {
+        if (param.matches("\\d+")) {
+            return new ResponseEntity<>(taskManagementService.getUserProfileById(Integer.parseInt(param)),
+                    HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(taskManagementService.getUserProfileByUsername(param), HttpStatus.OK);
+        }
     }
 
 }

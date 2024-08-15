@@ -17,9 +17,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Component
 @AllArgsConstructor
+@Log4j2
 public class JwtFilter extends OncePerRequestFilter {
 
     ApplicationContext context;
@@ -36,6 +38,7 @@ public class JwtFilter extends OncePerRequestFilter {
             token = header.substring(7);
             email = jwtTokenService.extractEmail(token);
         }
+        log.info(String.format("Security context is null: %b ", SecurityContextHolder.getContext().getAuthentication() == null));
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = context.getBean(UserDetailsProvider.class).loadUserByUsername(email);
             if (jwtTokenService.validateToken(token, userDetails)) {
@@ -50,7 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 null, userDetails.getAuthorities());
         authToken.setDetails(new WebAuthenticationDetailsSource()
                 .buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authToken);
+         SecurityContextHolder.getContext().setAuthentication(authToken);
     }
 
 }

@@ -10,7 +10,6 @@ public class TaskDetailsDtoMapper {
 
     public static TaskDetails toDto(Task task) {
         TaskDetails taskDetailsDto = new TaskDetails();
-        taskDetailsDto.setId(task.getId());
         taskDetailsDto.setTitle(task.getTitle());
         taskDetailsDto.setStatus(task.getStatus());
         taskDetailsDto.setPriority(task.getPriority());
