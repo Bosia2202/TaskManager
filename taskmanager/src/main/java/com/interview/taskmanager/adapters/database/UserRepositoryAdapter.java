@@ -29,10 +29,6 @@ public interface UserRepositoryAdapter {
 
     User findByUsername(String username);
 
-    UserProfile findUserProfileById(Integer id);
-
-    UserProfile findUserProfileByUsername(String username);
-
     User findUserWithAssignedTasksByUsername(String username);
 
 }

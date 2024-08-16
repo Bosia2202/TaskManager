@@ -11,5 +11,4 @@ public class ExecutedTaskDto {
     private String title;
     private TaskStatus status;
     private TaskPriority priority;
-    private AuthorDto author;
 }

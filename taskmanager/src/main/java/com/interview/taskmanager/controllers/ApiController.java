@@ -57,13 +57,13 @@ public class ApiController {
     public ResponseEntity<HttpStatus> addExecutor(@RequestParam("taskId") Integer taskId,
             @RequestParam("executorId") Integer executorId, Principal principal) {
         taskManagementService.addExecutor(taskId, executorId, principal);
-        return new ResponseEntity<>(HttpStatus.OK); //TODO: Сделать добавление исполнителей
+        return new ResponseEntity<>(HttpStatus.OK); 
     }
 
     @DeleteMapping("task/executor/delete")
     public ResponseEntity<HttpStatus> deleteExecutor(@RequestParam("taskId") Integer taskId,
-            @RequestParam("userId") Integer userId, Principal principal) {
-        taskManagementService.deleteExecutor(taskId, userId, principal);
+            @RequestParam("executorId") Integer executorId, Principal principal) {
+        taskManagementService.deleteExecutor(taskId, executorId, principal);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -72,23 +72,23 @@ public class ApiController {
         return new ResponseEntity<>(taskManagementService.findById(id), HttpStatus.OK);
     }
 
-    @GetMapping("/task/findAll")
+    @GetMapping("task/findAll")
     public ResponseEntity<List<TaskBriefInfoDto>> searchByTitle(@RequestParam("title") String title) {
         return new ResponseEntity<>(taskManagementService.findAllTasksByTitle(title), HttpStatus.OK);
     }
 
-    @GetMapping("/task/myTask")
+    @GetMapping("task/myTask")
     public ResponseEntity<List<OwnerTaskDto>> getUserTask(Principal principal) {
         return new ResponseEntity<>(taskManagementService.getAssignedTasksList(principal), HttpStatus.OK);
     }
 
-    @PutMapping("/comment/create")
+    @PutMapping("comment/create")
     public ResponseEntity<HttpStatus> createComment(@RequestBody CommentDetails commentDetails, Principal principal) {
         taskManagementService.createComment(commentDetails, principal);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PatchMapping("/comment/update")
+    @PatchMapping("comment/update")
     public ResponseEntity<HttpStatus> updateComment(@RequestParam("commentId") Integer commentId,
             @RequestBody CommentDetails commentDetails,
             Principal principal) {
@@ -96,7 +96,7 @@ public class ApiController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/comment/delete")
+    @DeleteMapping("comment/delete")
     public ResponseEntity<HttpStatus> deleteComment(@RequestParam("commentId") Integer commentId, Principal principal) {
         taskManagementService.deleteComment(commentId, principal);
         return new ResponseEntity<>(HttpStatus.OK);

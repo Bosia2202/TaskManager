@@ -110,24 +110,6 @@ public class UserRepository implements UserRepositoryAdapter {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public UserProfile findUserProfileById(Integer id) throws NoResultException {
-        User user = userJpaRepository.findById(id).orElseThrow(() -> new NoResultException());
-        List<Task> ownerTasks = getOwnerTasksByUserId(id);
-        List<Task> executedTasks = getExecutedTasksByUserId(id);
-        return new UserProfile(user, ownerTasks, executedTasks);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public UserProfile findUserProfileByUsername(String username) throws NoResultException {
-        User user = userJpaRepository.findByUsername(username).orElseThrow(() -> new NoResultException());
-        List<Task> ownerTasks = getOwnerTasksByUsername(username);
-        List<Task> executedTasks = getExecutedTasksByUsername(username);
-        return new UserProfile(user, ownerTasks, executedTasks);
-    }
-
-    @Override
     public User findUserWithAssignedTasksByUsername(String username) throws NoResultException {
         EntityGraph entityGraph = entityManager.getEntityGraph("user-entity-graph-with-owner-task");
         TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.username = :username",
@@ -135,34 +117,6 @@ public class UserRepository implements UserRepositoryAdapter {
         query.setParameter("username", username);
         query.setHint("jakarta.persistence.fetchgraph", entityGraph);
         return query.getSingleResult();
-    }
-
-    private List<Task> getOwnerTasksByUserId(Integer id) {
-        TypedQuery<Task> ownerTasksQuery = entityManager.createQuery(
-                "SELECT t FROM Task t WHERE t.author.id = :id", Task.class);
-        ownerTasksQuery.setParameter("id", id);
-        return ownerTasksQuery.getResultList();
-    }
-
-    private List<Task> getExecutedTasksByUserId(Integer id) {
-        TypedQuery<Task> executedTasksQuery = entityManager.createQuery(
-                "SELECT t FROM Task t JOIN FETCH t.executors e WHERE e.id = :id", Task.class);
-        executedTasksQuery.setParameter("id", id);
-        return executedTasksQuery.getResultList();
-    }
-
-    private List<Task> getOwnerTasksByUsername(String username) {
-        TypedQuery<Task> ownerTasksQuery = entityManager.createQuery(
-            "SELECT t FROM Task t WHERE t.author.username = :username", Task.class);
-        ownerTasksQuery.setParameter("username", username);
-        return ownerTasksQuery.getResultList();
-    }
-
-    private List<Task> getExecutedTasksByUsername(String username) {
-        TypedQuery<Task> executedTasksQuery = entityManager.createQuery(
-            "SELECT t FROM Task t JOIN FETCH t.executors e WHERE e.username = :username", Task.class);
-        executedTasksQuery.setParameter("username", username);
-        return executedTasksQuery.getResultList();
     }
 
 }

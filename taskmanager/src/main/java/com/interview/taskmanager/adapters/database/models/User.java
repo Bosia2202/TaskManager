@@ -77,7 +77,7 @@ public class User implements UserDetails {
         @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
         private List<Task> ownerTasks;
 
-        @ManyToMany(cascade = CascadeType.ALL, mappedBy = "executors")
+        @ManyToMany(mappedBy = "executors")
         private List<Task> executedTasks;
 
         @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")

@@ -1,4 +1,4 @@
-package com.interview.taskmanager.common.dto.profile;
+package com.interview.taskmanager.common.dto.task;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
