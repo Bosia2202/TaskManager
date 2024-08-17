@@ -94,10 +94,4 @@ public class Task {
                 executors.add(user);
         }
 
-        public void deleteExecutor(User user) {
-                if (!executors.isEmpty()) {
-                        executors.removeIf(u -> u.equals(user));
-                }
-        }
-
 }

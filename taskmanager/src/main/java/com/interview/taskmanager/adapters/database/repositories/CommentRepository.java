@@ -1,6 +1,7 @@
 package com.interview.taskmanager.adapters.database.repositories;
 
-import org.springframework.data.jpa.repository.EntityGraph;
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,17 +36,15 @@ public class CommentRepository implements CommentRepositoryAdapter {
 
     @Override
     @Transactional
-    public void deleteComment(Integer id) {
+    public void removeComment(Integer id) {
         commentJpaRepository.deleteById(id);
     }
 
     @Override
-    @EntityGraph(value = "comment-entity-information")
-    @Transactional(readOnly = true)
-    public Comment findCommentById(Integer id) throws EntityNotFoundException {
-        return commentJpaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Comment [id = '%d'] wasn't found", id)));
+    public List<Comment> getCommentsByTaskId(Integer id) {
+        //TODO: реализовать метод 
     }
+
+    //TODO: Сделать рефакторинг комментариев 
 
 }

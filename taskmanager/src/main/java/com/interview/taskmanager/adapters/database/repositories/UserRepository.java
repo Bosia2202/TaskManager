@@ -1,22 +1,17 @@
 package com.interview.taskmanager.adapters.database.repositories;
 
-import java.util.List;
-import java.util.Optional;
-
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.interview.taskmanager.adapters.database.UserRepositoryAdapter;
-import com.interview.taskmanager.adapters.database.models.Task;
 import com.interview.taskmanager.adapters.database.models.User;
 import com.interview.taskmanager.adapters.database.repositories.jpa.UserJpaRepository;
-import com.interview.taskmanager.common.dto.profile.UserProfile;
 import com.interview.taskmanager.infra.security.authenticated.AuthenticatedUserDetails;
 import com.interview.taskmanager.infra.security.authenticated.AuthenticatedUserDetailsMapper;
 
 import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -41,72 +36,71 @@ public class UserRepository implements UserRepositoryAdapter {
 
     @Override
     @Transactional
-    public void updateUserUsername(Integer id, String newUsername) throws EntityNotFoundException {
+    public void updateUsername(Integer id, String newUsername) throws NoResultException {
         User user = userJpaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(
-                        "User [id = %d] wasn't update. Update info [newUsername = '%s']", id, newUsername)));
+                .orElseThrow(() -> new NoResultException(String.format(
+                        "The user [id = '%d'] has not been found and their name has not been updated.", id)));
         user.setUsername(newUsername);
         userJpaRepository.save(user);
     }
 
     @Override
     @Transactional
-    public void updateUserEmail(Integer id, String newEmail) throws EntityNotFoundException {
+    public void updateEmail(Integer id, String newEmail) throws NoResultException {
         User user = userJpaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String
-                        .format("User [id = %d] wasn't update. Update info [newEmail = '%s']", id, newEmail)));
+                .orElseThrow(() -> new NoResultException(String
+                        .format("The user [id = '%d'] has not been found and their email has not been updated.", id)));
         user.setEmail(newEmail);
         userJpaRepository.save(user);
     }
 
     @Override
     @Transactional
-    public void updateUserPassword(Integer id, String newPassword) throws EntityNotFoundException {
+    public void updatePassword(Integer id, String newPassword) throws NoResultException {
         User user = userJpaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Password doesn't update"));
+                .orElseThrow(() -> new NoResultException(String
+                        .format("The user [id = '%d'] has not been found and their password has not been updated.", id)));
         user.setPassword(newPassword);
         userJpaRepository.save(user);
     }
 
     @Override
     @Transactional
-    public void deleteUserById(Integer id) {
-        userJpaRepository.deleteById(id);
-    }
-
-    @Override
-    @Transactional
-    public void deleteUserByUsername(String name) {
-        userJpaRepository.deleteUserByUsername(name);
+    public void removeUserById(Integer id) throws NoResultException {
+        if (userJpaRepository.existsById(id)) {
+            userJpaRepository.deleteById(id);
+        } else {
+            throw new NoResultException(String.format("The user [id = '%d'] has not been found and has not been deleted.", id));
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public AuthenticatedUserDetails getAuthorizationInfo(String email) throws EntityNotFoundException {
-        User foundUser = userJpaRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(
-                String.format("User [email = '%s'] wasn't found", email)));
+    public AuthenticatedUserDetails getUserAuthorizationInfo(String email) throws UsernameNotFoundException {
+        User foundUser = userJpaRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(
+                String.format("The user [email = '%s'] wasn't found and has no been authenticated.", email)));
         return AuthenticatedUserDetailsMapper.toAuthenticatedUserDetails(foundUser);
     }
 
     @Override
-    public User findById(Integer id) throws EntityNotFoundException {
+    public User findById(Integer id) throws NoResultException {
         return userJpaRepository.findById(id)
                 .orElseThrow(
-                        () -> new EntityNotFoundException(String.format("User [id = %d] wasn't found", id)));
+                        () -> new NoResultException(String.format("User [id = '%d'] wasn't found.", id)));
     }
 
     @Override
-    public User findByUsername(String username) {
+    public User findByUsername(String username) throws NoResultException {
         return userJpaRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("User [username = %s] wasn't found", username)));
+                .orElseThrow(() -> new NoResultException(
+                        String.format("User [username = %s] wasn't found.", username)));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public User findByEmail(String email) {
-        return userJpaRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(
-                String.format("User [email = '%s'] wasn't found", email)));
+    public User findByEmail(String email) throws NoResultException {
+        return userJpaRepository.findByEmail(email).orElseThrow(() -> new NoResultException(
+                String.format("User [email = '%s'] wasn't found.", email)));
     }
 
     @Override

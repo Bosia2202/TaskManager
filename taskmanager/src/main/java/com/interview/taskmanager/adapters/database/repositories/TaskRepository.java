@@ -35,7 +35,7 @@ public class TaskRepository implements TaskRepositoryAdapter {
 
     @Override
     @Transactional
-    public void create(TaskDetails taskDetails, User currentUser) {
+    public void createNewTask(TaskDetails taskDetails, User currentUser) {
         Task task = new Task();
         task.setDetails(taskDetails);
         task.setAuthor(currentUser);
@@ -44,9 +44,10 @@ public class TaskRepository implements TaskRepositoryAdapter {
 
     @Override
     @Transactional
-    public void updateById(Integer id, TaskDetails taskDetails) throws EntityNotFoundException {
+    public void updateTaskById(Integer id, TaskDetails taskDetails) throws NoResultException {
         Task task = taskJpaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Task [id = '%d'] wasn't found", id)));
+                .orElseThrow(() -> new NoResultException(
+                        String.format("Task [id = '%d'] was not found and no update was performed", id)));
         cacheManager.getCache("tasks").evictIfPresent(id);
         task.setDetails(taskDetails);
         taskJpaRepository.save(task);
@@ -54,63 +55,74 @@ public class TaskRepository implements TaskRepositoryAdapter {
 
     @Override
     @Transactional
-    public void deleteById(Integer id) {
-        cacheManager.getCache("tasks").evictIfPresent(id);
-        taskJpaRepository.deleteById(id);
-    }
-
-    @Override
-    @Transactional
-    public void addExecutor(User executer, Task task) {
-        task.addExecutor(executer);
-        taskJpaRepository.save(task);
-    }
-
-    @Override
-    @Transactional
-    public void deleteExecutor(Integer executerId, Integer taskId) throws EntityNotFoundException {
-        Query query = entityManager.createNativeQuery(
-                "DELETE FROM tasks_executors WHERE task_id = :taskId AND executor_id = :executorId", Void.class);
-        query.setParameter("executorId", executerId);
-        query.setParameter("taskId", taskId);
-        query.executeUpdate();
+    public void removeTaskById(Integer id) throws NoResultException {
+        if (taskJpaRepository.existsById(id)) {
+            cacheManager.getCache("tasks").evictIfPresent(id);
+            taskJpaRepository.deleteById(id);
+        } else {
+            throw new NoResultException(String.format("Task [id = '%d'] not found and not deleted", id));
+        }
     }
 
     @Override
     @Cacheable(value = "tasks", key = "#id")
-    @Transactional(readOnly = true)
-    public Task findById(Integer id) throws EntityNotFoundException {
-        return taskJpaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Task [id = '%d'] wasn't found", id)));
+    public TaskDto loadCompleteTaskInfoById(Integer id) throws NoResultException {
+        Task task = taskJpaRepository.findById(id)
+                .orElseThrow(() -> new NoResultException(String.format("Task [id = '%d'] wasn't found", id)));
+        User author = getAuthorByTaskId(id);
+        List<User> executors = getExecutorsByTaskId(id);
+        return new TaskDto.Builder()
+                .id(task.getId())
+                .title(task.getTitle())
+                .description(task.getDescription())
+                .status(task.getStatus())
+                .priority(task.getPriority())
+                .author(author)
+                .executors(executors)
+                .build();
+    }
+
+    private User getAuthorByTaskId(Integer id) throws NoResultException {
+        TypedQuery<User> query = entityManager
+                .createQuery("SELECT u FROM User u JOIN FETCH u.ownerTasks ow WHERE ow.id = :taskid", User.class);
+        query.setParameter("taskid", id);
+        return query.getSingleResult();
+    }
+
+    private List<User> getExecutorsByTaskId(Integer id) {
+        Query query = entityManager
+                .createNativeQuery("SELECT executor_id FROM tasks_executors WHERE task_id = :taskId", Integer.class);
+        query.setParameter("taskId", id);
+        return query.getResultList().stream().map(executor_id -> getExecutorById(id)).toList();
+    }
+
+    private User getExecutorById(Integer id) {
+        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.id = :id", User.class);
+        query.setParameter("id", id);
+        return query.getSingleResult();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Task> findAllByTitle(String title) {
-        return taskJpaRepository.findAllByTitle(title);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Task> getOwnerTasksByUserId(Integer id) {
+    public List<Task> getUserOwnedTasks(Integer userId) {
         TypedQuery<Task> query = entityManager.createQuery(
                 "SELECT t FROM Task t WHERE t.author.id = :id", Task.class);
-        query.setParameter("id", id);
+        query.setParameter("id", userId);
         return query.getResultList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Task> getExecutedTasksByUserId(Integer id) {
+    public List<Task> getUserExecutedTasks(Integer userId) {
         TypedQuery<Task> query = entityManager.createQuery(
                 "SELECT t FROM Task t JOIN t.executors e WHERE e.id = :id", Task.class);
-        query.setParameter("id", id);
+        query.setParameter("id", userId);
         return query.getResultList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Task> getOwnerTasksByUsername(String username) {
+    public List<Task> getUserOwnedTasksByUsername(String username) {
         TypedQuery<Task> query = entityManager.createQuery(
                 "SELECT t FROM Task t WHERE t.author.username = :username", Task.class);
         query.setParameter("username", username);
@@ -119,7 +131,7 @@ public class TaskRepository implements TaskRepositoryAdapter {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Task> getExecutedTasksByUsername(String username) {
+    public List<Task> getUserExecutedTasksByUsername(String username) {
         TypedQuery<Task> query = entityManager.createQuery(
                 "SELECT t FROM Task t JOIN t.executors e WHERE e.username = :username", Task.class);
         query.setParameter("username", username);
@@ -138,39 +150,38 @@ public class TaskRepository implements TaskRepositoryAdapter {
     }
 
     @Override
-    public TaskDto loadFullTaskInfoById(Integer id) {
-        Task task = taskJpaRepository.findById(id)
-                .orElseThrow(() -> new NoResultException(String.format("Task [id = '%d'] wasn't found", id)));
-        User author = getAuthorByTaskId(id);
-        List<User> executors = getExecutorsByTaskId(id);
-        return new TaskDto.Builder()
-                .id(task.getId())
-                .title(task.getTitle())
-                .description(task.getDescription())
-                .status(task.getStatus())
-                .priority(task.getPriority())
-                .author(author)
-                .executors(executors)
-                .build();
-    }
-
-    private User getAuthorByTaskId(Integer id) {
-        TypedQuery<User> query = entityManager
-                .createQuery("SELECT u FROM User u JOIN FETCH u.ownerTasks ow WHERE ow.id = :taskid", User.class);
-        query.setParameter("taskid", id);
-        return query.getSingleResult();
-    }
-
-    private List<User> getExecutorsByTaskId(Integer id) {
+    @Transactional
+    public void addExecutorToTask(User executor, Integer taskId) {
         Query query = entityManager
-                .createNativeQuery("SELECT executor_id FROM tasks_executors WHERE task_id = :task_id", Integer.class);
-        query.setParameter("task_id", id);
-        return query.getResultList().stream().map(executer_id -> getExecutorById((Integer) executer_id)).toList();
+                .createNativeQuery("INSERT INTO tasks_executors (task_id,executor_id) VALUES (:taskId, :executorId)");
+        query.setParameter("taskId", taskId);
+        query.setParameter("executorId", executor.getId());
+        query.executeUpdate();
+        cacheManager.getCache("tasks").evictIfPresent(taskId);
     }
 
-    private User getExecutorById(Integer id) {
-        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User WHERE u.id = :id", User.class);
-        query.setParameter("id", id);
-        return query.getSingleResult();
+    @Override
+    @Transactional
+    public void removeExecutorFromTask(User executor, Integer taskId) throws EntityNotFoundException {
+        Query query = entityManager.createNativeQuery(
+                "DELETE FROM tasks_executors WHERE task_id = :taskId AND executor_id = :executorId", Void.class);
+        query.setParameter("executorId", executor.getId());
+        query.setParameter("taskId", taskId);
+        query.executeUpdate();
+        cacheManager.getCache("tasks").evictIfPresent(taskId);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Task findById(Integer id) throws EntityNotFoundException {
+        return taskJpaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Task [id = '%d'] wasn't found", id)));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Task> findTasksByTitle(String title) {
+        return taskJpaRepository.findAllByTitle(title);
+    }
+
 }

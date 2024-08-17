@@ -1,33 +1,33 @@
 package com.interview.taskmanager.adapters.database;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import com.interview.taskmanager.adapters.database.models.User;
-import com.interview.taskmanager.common.dto.profile.UserProfile;
 import com.interview.taskmanager.infra.security.authenticated.AuthenticatedUserDetails;
+
+import jakarta.persistence.NoResultException;
 
 @Repository
 public interface UserRepositoryAdapter {
 
     void createUser(User user);
 
-    void updateUserUsername(Integer id, String newUsername);
+    void updateUsername(Integer id, String newUsername) throws NoResultException;
 
-    void updateUserEmail(Integer id, String newEmail);
+    void updateEmail(Integer id, String newEmail) throws NoResultException;
 
-    void updateUserPassword(Integer id, String newPassword);
+    void updatePassword(Integer id, String newPassword) throws NoResultException;
 
-    void deleteUserById(Integer id);
+    void removeUserById(Integer id) throws NoResultException;
 
-    void deleteUserByUsername(String name);
+    AuthenticatedUserDetails getUserAuthorizationInfo(String email) throws UsernameNotFoundException;
 
-    AuthenticatedUserDetails getAuthorizationInfo(String email);
+    User findById(Integer id) throws NoResultException;
 
-    User findById(Integer id);
+    User findByUsername(String username) throws NoResultException;
 
-    User findByEmail(String email);
-
-    User findByUsername(String username);
+    User findByEmail(String email) throws NoResultException;
 
     User findUserWithAssignedTasksByUsername(String username);
 

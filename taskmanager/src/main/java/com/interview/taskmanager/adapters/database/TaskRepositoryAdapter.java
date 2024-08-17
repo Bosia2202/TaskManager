@@ -10,33 +10,35 @@ import com.interview.taskmanager.common.dto.task.TaskDetails;
 import com.interview.taskmanager.common.dto.task.TaskDto;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.NoResultException;
 
 @Repository
 public interface TaskRepositoryAdapter {
 
-    Task findById(Integer id) throws EntityNotFoundException;
+    void createNewTask(TaskDetails taskDetails, User currentUser);
 
-    List<Task> findAllByTitle(String title);
+    void updateTaskById(Integer id, TaskDetails taskDetails) throws NoResultException;
 
-    void deleteById(Integer id) throws EntityNotFoundException;
+    void removeTaskById(Integer id) throws NoResultException;
 
-    void updateById(Integer id, TaskDetails taskDetails) throws EntityNotFoundException;
+    TaskDto loadCompleteTaskInfoById(Integer id) throws NoResultException;
 
-    void create(TaskDetails taskDetails, User currentUser);
+    List<Task> getUserOwnedTasks(Integer userId);
 
-    void addExecutor(User executer, Task task);
+    List<Task> getUserExecutedTasks(Integer userId);
 
-    void deleteExecutor(Integer executerId, Integer taskId);
+    List<Task> getUserOwnedTasksByUsername(String username);
 
-    List<Task> getOwnerTasksByUserId(Integer id);
-
-    List<Task> getExecutedTasksByUserId(Integer id);
-
-    List<Task> getOwnerTasksByUsername(String username);
-
-    List<Task> getExecutedTasksByUsername(String username);
-
-    TaskDto loadFullTaskInfoById(Integer id);
+    List<Task> getUserExecutedTasksByUsername(String username);
 
     boolean isUserOwnerOfTask(String username, Integer taskId);
+
+    void addExecutorToTask(User executor, Integer taskId);
+
+    void removeExecutorFromTask(User executor, Integer taskId);
+
+    Task findById(Integer id) throws EntityNotFoundException;
+
+    List<Task> findTasksByTitle(String title); //Сделать пагинацию
+
 }

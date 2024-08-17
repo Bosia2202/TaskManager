@@ -4,6 +4,7 @@
         "сomment",
         "Cacheable",
         "Configurer",
+        "fetchgraph",
         "Hmac",
         "Jwts",
         "Servlet",
