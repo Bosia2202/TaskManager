@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interview.taskmanager.common.dto.CommentDetails;
+import com.interview.taskmanager.common.dto.comment.CommentDto;
 import com.interview.taskmanager.common.dto.profile.OwnerTaskDto;
 import com.interview.taskmanager.common.dto.profile.UserProfile;
 import com.interview.taskmanager.common.dto.task.TaskBriefInfoDto;
@@ -49,7 +50,7 @@ public class ApiController {
 
     @DeleteMapping("/task/delete")
     public ResponseEntity<HttpStatus> deleteTaskById(@RequestParam("id") Integer id, Principal principal) {
-        taskManagementService.deleteTaskById(id, principal);
+        taskManagementService.removeTaskById(id, principal);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -57,13 +58,13 @@ public class ApiController {
     public ResponseEntity<HttpStatus> addExecutor(@RequestParam("taskId") Integer taskId,
             @RequestParam("executorId") Integer executorId, Principal principal) {
         taskManagementService.addExecutor(taskId, executorId, principal);
-        return new ResponseEntity<>(HttpStatus.OK); 
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("task/executor/delete")
     public ResponseEntity<HttpStatus> deleteExecutor(@RequestParam("taskId") Integer taskId,
             @RequestParam("executorId") Integer executorId, Principal principal) {
-        taskManagementService.deleteExecutor(taskId, executorId, principal);
+        taskManagementService.removeExecutor(taskId, executorId, principal);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -73,8 +74,9 @@ public class ApiController {
     }
 
     @GetMapping("task/findAll")
-    public ResponseEntity<List<TaskBriefInfoDto>> searchByTitle(@RequestParam("title") String title) {
-        return new ResponseEntity<>(taskManagementService.findAllTasksByTitle(title), HttpStatus.OK);
+    public ResponseEntity<List<TaskBriefInfoDto>> searchByTitle(@RequestParam("title") String title,
+            @RequestParam("page") Integer page) {
+        return new ResponseEntity<>(taskManagementService.findAllTasksByTitle(title, page), HttpStatus.OK);
     }
 
     @GetMapping("task/myTask")
@@ -98,8 +100,14 @@ public class ApiController {
 
     @DeleteMapping("comment/delete")
     public ResponseEntity<HttpStatus> deleteComment(@RequestParam("commentId") Integer commentId, Principal principal) {
-        taskManagementService.deleteComment(commentId, principal);
+        taskManagementService.removeComment(commentId, principal);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("comment/getComments")
+    public ResponseEntity<List<CommentDto>> getComments(@RequestParam("taskId") Integer id,
+            @RequestParam("page") Integer page) {
+        return new ResponseEntity<>(taskManagementService.getCommentsByTaskId(id, page), HttpStatus.OK);
     }
 
     @GetMapping("user/{param}")

@@ -5,14 +5,13 @@ import com.interview.taskmanager.common.dto.task.AuthorDto;
 
 import lombok.Getter;
 
-
 @Getter
 public class CommentDto {
     private Integer id;
     private String content;
     private AuthorDto author;
 
-    private CommentDto (Builder builder) {
+    private CommentDto(Builder builder) {
         this.id = builder.id;
         this.content = builder.content;
         this.author = builder.author;
@@ -23,13 +22,12 @@ public class CommentDto {
         private String content;
         private AuthorDto author;
 
-        public Builder id (Integer id) {
+        public Builder id(Integer id) {
             this.id = id;
             return this;
         }
-        
 
-        public Builder content(String content){
+        public Builder content(String content) {
             this.content = content;
             return this;
         }

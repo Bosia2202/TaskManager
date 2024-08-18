@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,7 +98,7 @@ public class TaskRepository implements TaskRepositoryAdapter {
         return query.getResultList().stream().map(executor_id -> getExecutorById(id)).toList();
     }
 
-    private User getExecutorById(Integer id) {
+    private User getExecutorById(Integer id) throws NoResultException {
         TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.id = :id", User.class);
         query.setParameter("id", id);
         return query.getSingleResult();
@@ -173,15 +175,17 @@ public class TaskRepository implements TaskRepositoryAdapter {
 
     @Override
     @Transactional(readOnly = true)
-    public Task findById(Integer id) throws EntityNotFoundException {
+    public Task findById(Integer id) throws NoResultException {
         return taskJpaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Task [id = '%d'] wasn't found", id)));
+                .orElseThrow(() -> new NoResultException(String.format("Task [id = '%d'] wasn't found", id)));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Task> findTasksByTitle(String title) {
-        return taskJpaRepository.findAllByTitle(title);
+    public List<Task> findTasksByTitle(String title, Integer pageNumber) {
+        pageNumber = (pageNumber - 1) * 10;
+        Pageable page = PageRequest.of(pageNumber, 10);
+        return taskJpaRepository.findAllByTitle(title, page);
     }
 
 }

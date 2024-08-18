@@ -9,15 +9,22 @@ import com.interview.taskmanager.adapters.database.CommentRepositoryAdapter;
 import com.interview.taskmanager.adapters.database.models.Comment;
 import com.interview.taskmanager.adapters.database.repositories.jpa.CommentJpaRepository;
 import com.interview.taskmanager.common.dto.CommentDetails;
+import com.interview.taskmanager.common.dto.comment.CommentDto;
 
-import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import lombok.RequiredArgsConstructor;
 
 @Repository
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CommentRepository implements CommentRepositoryAdapter {
 
-    private CommentJpaRepository commentJpaRepository;
+    private final CommentJpaRepository commentJpaRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void createComment(Comment comment) {
@@ -26,25 +33,48 @@ public class CommentRepository implements CommentRepositoryAdapter {
 
     @Override
     @Transactional
-    public void updateComment(Integer id, CommentDetails commentDetails) throws EntityNotFoundException {
+    public void updateComment(Integer id, CommentDetails commentDetails) throws NoResultException {
         Comment comment = commentJpaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Comment [id = '%d'] wasn't updated", id)));
+                .orElseThrow(() -> new NoResultException(
+                        String.format("Comment [id = '%d'] wasn't found and hasn't been updated", id)));
         comment.setDetails(commentDetails);
         commentJpaRepository.save(comment);
     }
 
     @Override
     @Transactional
-    public void removeComment(Integer id) {
-        commentJpaRepository.deleteById(id);
+    public void removeComment(Integer id) throws NoResultException {
+        if (commentJpaRepository.existsById(id)) {
+            commentJpaRepository.deleteById(id);
+        } else {
+            throw new NoResultException(String.format("Comment [id = '%d'] wasn't found and hasn't been deleted", id));
+        }
     }
 
     @Override
-    public List<Comment> getCommentsByTaskId(Integer id) {
-        //TODO: реализовать метод 
+    @Transactional(readOnly = true)
+    public List<CommentDto> getCommentsByTaskId(Integer id, Integer pageNumber) {
+        final int PAGE_SIZE = 15;
+        TypedQuery<Comment> commentQuery = entityManager.createQuery(
+                "SELECT c FROM Comment c JOIN FETCH c.author WHERE c.task.id = :taskId",
+                Comment.class);
+        commentQuery.setParameter("taskId", id);
+        commentQuery.setFirstResult((pageNumber - 1) * PAGE_SIZE);
+        commentQuery.setMaxResults(PAGE_SIZE);
+        return commentQuery.getResultStream().map(comment -> new CommentDto.Builder()
+                .id(comment.getId())
+                .content(comment.getContent())
+                .author(comment.getAuthor())
+                .build()).toList();
     }
 
-    //TODO: Сделать рефакторинг комментариев 
-
+    @Override
+    public boolean isUsersComment(String username, Integer commentId) {
+        TypedQuery<Boolean> query = entityManager.createQuery(
+                "SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Comment c JOIN c.author a WHERE c.id = :commentId AND a.username = :username",
+                Boolean.class);
+        query.setParameter("commentId", commentId);
+        query.setParameter("username", username);
+        return query.getSingleResult();
+    }
 }

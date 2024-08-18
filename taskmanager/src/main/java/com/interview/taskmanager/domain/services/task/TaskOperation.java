@@ -13,6 +13,7 @@ import com.interview.taskmanager.adapters.database.models.Comment;
 import com.interview.taskmanager.adapters.database.models.Task;
 import com.interview.taskmanager.adapters.database.models.User;
 import com.interview.taskmanager.common.dto.CommentDetails;
+import com.interview.taskmanager.common.dto.comment.CommentDto;
 import com.interview.taskmanager.common.dto.profile.OwnerTaskDto;
 import com.interview.taskmanager.common.dto.profile.OwnerTaskDtoMapper;
 import com.interview.taskmanager.common.dto.profile.UserProfile;
@@ -21,7 +22,6 @@ import com.interview.taskmanager.common.dto.task.TaskBriefInfoDtoMapper;
 import com.interview.taskmanager.common.dto.task.TaskDetails;
 import com.interview.taskmanager.common.dto.task.TaskDto;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.NoResultException;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -45,7 +45,7 @@ public class TaskOperation implements TaskManagementService {
 
     @Override
     public void updateTaskById(Integer id, TaskDetails taskDetails, Principal currentUser)
-            throws EntityNotFoundException, AccessDeniedException {
+            throws NoResultException, AccessDeniedException {
         log.info(String.format("Update task [id = %d] by user '%s'", id, currentUser.getName()));
         if (taskRepositoryAdapter.isUserOwnerOfTask(currentUser.getName(), id)) {
             taskRepositoryAdapter.updateTaskById(id, taskDetails);
@@ -55,8 +55,8 @@ public class TaskOperation implements TaskManagementService {
     }
 
     @Override
-    public void deleteTaskById(Integer taskId, Principal currentUser)
-            throws EntityNotFoundException, AccessDeniedException {
+    public void removeTaskById(Integer taskId, Principal currentUser)
+            throws NoResultException, AccessDeniedException {
         log.info(String.format("Delete task [id = %d] by user = '%s'", taskId, currentUser.getName()));
         if (taskRepositoryAdapter.isUserOwnerOfTask(currentUser.getName(), taskId)) {
             taskRepositoryAdapter.removeTaskById(taskId);
@@ -67,7 +67,7 @@ public class TaskOperation implements TaskManagementService {
 
     @Override
     public void addExecutor(Integer taskId, Integer executorId, Principal currentUser)
-            throws EntityNotFoundException, AccessDeniedException {
+            throws NoResultException, AccessDeniedException {
         log.info(String.format("Add executor [id = %d] in task [id = '%d'] by user '%s'", executorId, taskId,
                 currentUser.getName()));
         User executor = userRepositoryAdapter.findById(executorId);
@@ -78,8 +78,8 @@ public class TaskOperation implements TaskManagementService {
     }
 
     @Override
-    public void deleteExecutor(Integer taskId, Integer executorId, Principal currentUser)
-            throws EntityNotFoundException, AccessDeniedException {
+    public void removeExecutor(Integer taskId, Integer executorId, Principal currentUser)
+            throws NoResultException, AccessDeniedException {
         log.info(String.format("Delete executor [id = %d] in task [id = '%d'] by user '%s'", executorId, taskId,
                 currentUser.getName()));
         User executor = userRepositoryAdapter.findById(executorId);
@@ -92,19 +92,19 @@ public class TaskOperation implements TaskManagementService {
     }
 
     @Override
-    public TaskDto findById(Integer id) throws EntityNotFoundException {
+    public TaskDto findById(Integer id) throws NoResultException {
         return taskRepositoryAdapter.loadCompleteTaskInfoById(id);
     }
 
     @Override
-    public List<TaskBriefInfoDto> findAllTasksByTitle(String title) throws EntityNotFoundException {
+    public List<TaskBriefInfoDto> findAllTasksByTitle(String title,Integer pageNumber) throws NoResultException {
         log.info(String.format("Searching tasks by title [title = %s]", title));
-        return taskRepositoryAdapter.findTasksByTitle(title).stream().map(TaskBriefInfoDtoMapper::toDto)
+        return taskRepositoryAdapter.findTasksByTitle(title, pageNumber).stream().map(TaskBriefInfoDtoMapper::toDto)
                 .toList();
     }
 
     @Override
-    public List<OwnerTaskDto> getAssignedTasksList(Principal currentUser) throws EntityNotFoundException {
+    public List<OwnerTaskDto> getAssignedTasksList(Principal currentUser) throws NoResultException {
         log.info(String.format("Get assigned tasks by user = '%s'", currentUser.getName()));
         User user = userRepositoryAdapter.findUserWithAssignedTasksByUsername(currentUser.getName());
         return user.getOwnerTasks().stream().map(OwnerTaskDtoMapper::toDto)
@@ -113,7 +113,7 @@ public class TaskOperation implements TaskManagementService {
 
     @Override
     public void createComment(CommentDetails commentDetails, Principal currentUser)
-            throws EntityNotFoundException {
+            throws NoResultException {
         log.info(String.format("Create new comment in task [id = %d] by user '%s'", commentDetails.getTaskId(),
                 currentUser.getName()));
         User author = userRepositoryAdapter.findByUsername(currentUser.getName());
@@ -127,11 +127,10 @@ public class TaskOperation implements TaskManagementService {
 
     @Override
     public void updateComment(Integer commentId, CommentDetails commentDetails, Principal currentUser)
-            throws AccessDeniedException {
+            throws NoResultException, AccessDeniedException {
         log.info(String.format("Update comment [id = %d] in task [id = %d], user '%s'", commentId,
                 commentDetails.getTaskId(), currentUser.getName()));
-        User user = userRepositoryAdapter.findByUsername(currentUser.getName());
-        if (!isUsersComment(user, commentId)) {
+        if (commentRepositoryAdapter.isUsersComment(currentUser.getName(), commentId)) {
             commentRepositoryAdapter.updateComment(commentId, commentDetails);
         } else {
             throw new AccessDeniedException(
@@ -140,11 +139,10 @@ public class TaskOperation implements TaskManagementService {
     }
 
     @Override
-    public void deleteComment(Integer commentId, Principal currentUser)
-            throws EntityNotFoundException, AccessDeniedException {
+    public void removeComment(Integer commentId, Principal currentUser)
+            throws NoResultException, AccessDeniedException {
         log.info(String.format("Delete comment in comment [id = %d], user '%s'", commentId, currentUser.getName()));
-        User user = userRepositoryAdapter.findByUsername(currentUser.getName());
-        if (isUsersComment(user, commentId)) {
+        if (commentRepositoryAdapter.isUsersComment(currentUser.getName(), commentId)) {
             commentRepositoryAdapter.removeComment(commentId);
         } else {
             throw new AccessDeniedException(String.format("Comment [id = %d] wasn't delete. Access denied", commentId));
@@ -152,7 +150,12 @@ public class TaskOperation implements TaskManagementService {
     }
 
     @Override
-    public UserProfile getUserProfileById(Integer id) throws EntityNotFoundException {
+    public List<CommentDto> getCommentsByTaskId(Integer taskId, Integer pageNumber) {
+        return commentRepositoryAdapter.getCommentsByTaskId(taskId, pageNumber);
+    }
+
+    @Override
+    public UserProfile getUserProfileById(Integer id) throws NoResultException {
         User user = userRepositoryAdapter.findById(id);
         List<Task> ownerTasks = taskRepositoryAdapter.getUserOwnedTasks(id);
         List<Task> executedTasks = taskRepositoryAdapter.getUserExecutedTasks(id);
@@ -160,16 +163,11 @@ public class TaskOperation implements TaskManagementService {
     }
 
     @Override
-    public UserProfile getUserProfileByUsername(String username) throws EntityNotFoundException {
+    public UserProfile getUserProfileByUsername(String username) throws NoResultException {
         User user = userRepositoryAdapter.findByUsername(username);
         List<Task> ownerTasks = taskRepositoryAdapter.getUserOwnedTasksByUsername(username);
         List<Task> executedTasks = taskRepositoryAdapter.getUserExecutedTasksByUsername(username);
         return new UserProfile(user, ownerTasks, executedTasks);
-    }
-
-  
-    private boolean isUsersComment(User user, Integer commentId) {
-        return user.getComments().stream().anyMatch(comment -> comment.getId().equals(commentId));
     }
 
 }

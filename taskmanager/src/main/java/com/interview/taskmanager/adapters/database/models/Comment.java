@@ -16,7 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "comment_table")
+@Table(name = "comments")
 @Data
 @NoArgsConstructor
 @NamedEntityGraph(name = "comment-entity-information", attributeNodes = {
@@ -40,6 +40,7 @@ public class Comment {
     private Integer id;
     private String content;
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User author;
     @ManyToOne
     @JoinColumn(name = "task_id")

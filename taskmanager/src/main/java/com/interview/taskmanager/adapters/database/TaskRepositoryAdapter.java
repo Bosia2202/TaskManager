@@ -9,7 +9,6 @@ import com.interview.taskmanager.adapters.database.models.User;
 import com.interview.taskmanager.common.dto.task.TaskDetails;
 import com.interview.taskmanager.common.dto.task.TaskDto;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.NoResultException;
 
 @Repository
@@ -35,10 +34,10 @@ public interface TaskRepositoryAdapter {
 
     void addExecutorToTask(User executor, Integer taskId);
 
-    void removeExecutorFromTask(User executor, Integer taskId);
+    void removeExecutorFromTask(User executor, Integer taskId) throws NoResultException;
 
-    Task findById(Integer id) throws EntityNotFoundException;
+    Task findById(Integer id) throws NoResultException;
 
-    List<Task> findTasksByTitle(String title); //Сделать пагинацию
+    List<Task> findTasksByTitle(String title, Integer pageNumber);
 
 }
