@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.interview.taskmanager.adapters.database.TaskRepositoryAdapter;
 import com.interview.taskmanager.adapters.database.models.Task;
 import com.interview.taskmanager.adapters.database.models.User;
-import com.interview.taskmanager.adapters.database.repositories.jpa.TaskJpaRepository;
+import com.interview.taskmanager.adapters.database.repositories.jpa.TaskCrudJpaOperation;
 import com.interview.taskmanager.common.dto.task.TaskDetails;
 import com.interview.taskmanager.common.dto.task.TaskDto;
 
@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TaskRepository implements TaskRepositoryAdapter {
 
-    private final TaskJpaRepository taskJpaRepository;
+    private final TaskCrudJpaOperation taskJpaRepository;
 
     private final CacheManager cacheManager;
 

@@ -46,7 +46,7 @@ public class TaskOperation implements TaskManagementService {
     @Override
     public void updateTaskById(Integer id, TaskDetails taskDetails, Principal currentUser)
             throws NoResultException, AccessDeniedException {
-        log.info(String.format("Update task [id = %d] by user '%s'", id, currentUser.getName()));
+        log.info(String.format("Updating task [id = %d] by user '%s'", id, currentUser.getName()));
         if (taskRepositoryAdapter.isUserOwnerOfTask(currentUser.getName(), id)) {
             taskRepositoryAdapter.updateTaskById(id, taskDetails);
         } else {

@@ -12,12 +12,17 @@ import com.interview.taskmanager.common.dto.task.TaskDetails;
 import com.interview.taskmanager.common.dto.task.TaskDto;
 import com.interview.taskmanager.domain.services.task.TaskManagementService;
 
+import jakarta.persistence.NoResultException;
+
+
 import java.security.Principal;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +46,7 @@ public class ApiController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PatchMapping("/task/path")
+    @PatchMapping("/task/update")
     public ResponseEntity<HttpStatus> updateTask(@RequestParam("taskId") Integer taskId,
             @RequestBody TaskDetails taskDetails, Principal principal) {
         taskManagementService.updateTaskById(taskId, taskDetails, principal);
@@ -73,13 +78,13 @@ public class ApiController {
         return new ResponseEntity<>(taskManagementService.findById(id), HttpStatus.OK);
     }
 
-    @GetMapping("task/findAll")
+    @GetMapping("task/searchByTitle")
     public ResponseEntity<List<TaskBriefInfoDto>> searchByTitle(@RequestParam("title") String title,
             @RequestParam("page") Integer page) {
         return new ResponseEntity<>(taskManagementService.findAllTasksByTitle(title, page), HttpStatus.OK);
     }
 
-    @GetMapping("task/myTask")
+    @GetMapping("task/assigned")
     public ResponseEntity<List<OwnerTaskDto>> getUserTask(Principal principal) {
         return new ResponseEntity<>(taskManagementService.getAssignedTasksList(principal), HttpStatus.OK);
     }
@@ -118,6 +123,16 @@ public class ApiController {
         } else {
             return new ResponseEntity<>(taskManagementService.getUserProfileByUsername(param), HttpStatus.OK);
         }
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<String> noResultException(NoResultException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<String> accessDenied(AccessDeniedException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.FORBIDDEN);
     }
 
 }

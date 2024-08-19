@@ -2,7 +2,9 @@ package com.interview.taskmanager.infra.security.jwt;
 
 import java.io.IOException;
 
+
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.interview.taskmanager.infra.security.UserDetailsProvider;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,9 +39,8 @@ public class JwtFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
             token = header.substring(7);
-            email = jwtTokenService.extractEmail(token);
+            email = extractEmailFromToken(token);
         }
-        log.info(String.format("Security context is null: %b ", SecurityContextHolder.getContext().getAuthentication() == null));
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = context.getBean(UserDetailsProvider.class).loadUserByUsername(email);
             if (jwtTokenService.validateToken(token, userDetails)) {
@@ -48,12 +50,21 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    private String extractEmailFromToken(String token) throws AccessDeniedException {
+        try {
+            return jwtTokenService.extractEmail(token);
+        } catch (JwtException exception) {
+            log.error(exception.getMessage());
+            throw new AccessDeniedException("Access denied");
+        }
+    }
+
     private void authenticateUserWithRequestDetails(UserDetails userDetails, HttpServletRequest request) {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
                 null, userDetails.getAuthorities());
         authToken.setDetails(new WebAuthenticationDetailsSource()
                 .buildDetails(request));
-         SecurityContextHolder.getContext().setAuthentication(authToken);
+        SecurityContextHolder.getContext().setAuthentication(authToken);
     }
 
 }

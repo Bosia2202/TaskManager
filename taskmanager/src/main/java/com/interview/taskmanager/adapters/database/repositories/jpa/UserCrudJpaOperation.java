@@ -8,7 +8,7 @@ import com.interview.taskmanager.adapters.database.models.User;
 import java.util.Optional;
 
 @Repository
-public interface UserJpaRepository extends JpaRepository<User, Integer> {
+public interface UserCrudJpaOperation extends JpaRepository<User, Integer> {
 
     Optional<User> findByUsername(String username);
 

@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.interview.taskmanager.adapters.database.UserRepositoryAdapter;
 import com.interview.taskmanager.adapters.database.models.User;
-import com.interview.taskmanager.adapters.database.repositories.jpa.UserJpaRepository;
+import com.interview.taskmanager.adapters.database.repositories.jpa.UserCrudJpaOperation;
 import com.interview.taskmanager.infra.security.authenticated.AuthenticatedUserDetails;
 import com.interview.taskmanager.infra.security.authenticated.AuthenticatedUserDetailsMapper;
 
@@ -23,7 +23,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class UserRepository implements UserRepositoryAdapter {
 
-    private final UserJpaRepository userJpaRepository;
+    private final UserCrudJpaOperation userJpaRepository;
 
     @PersistenceContext
     private EntityManager entityManager;

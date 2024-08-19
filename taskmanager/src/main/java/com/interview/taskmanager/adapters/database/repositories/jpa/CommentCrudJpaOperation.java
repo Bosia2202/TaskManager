@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.interview.taskmanager.adapters.database.models.Comment;
 
 @Repository
-public interface CommentJpaRepository extends JpaRepository<Comment, Integer>{
+public interface CommentCrudJpaOperation extends JpaRepository<Comment, Integer>{
 
 }

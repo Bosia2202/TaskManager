@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.interview.taskmanager.adapters.database.CommentRepositoryAdapter;
 import com.interview.taskmanager.adapters.database.models.Comment;
-import com.interview.taskmanager.adapters.database.repositories.jpa.CommentJpaRepository;
+import com.interview.taskmanager.adapters.database.repositories.jpa.CommentCrudJpaOperation;
 import com.interview.taskmanager.common.dto.CommentDetails;
 import com.interview.taskmanager.common.dto.comment.CommentDto;
 
@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CommentRepository implements CommentRepositoryAdapter {
 
-    private final CommentJpaRepository commentJpaRepository;
+    private final CommentCrudJpaOperation commentJpaRepository;
 
     @PersistenceContext
     private EntityManager entityManager;

@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 import com.interview.taskmanager.adapters.database.models.Task;
 
 @Repository
-public interface TaskJpaRepository extends JpaRepository<Task, Integer> {
+public interface TaskCrudJpaOperation extends JpaRepository<Task, Integer> {
     List<Task> findAllByTitle(String title, Pageable pageable);
 }

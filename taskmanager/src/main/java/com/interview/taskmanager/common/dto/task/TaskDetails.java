@@ -5,7 +5,7 @@ import com.interview.taskmanager.adapters.database.models.statuses.TaskStatus;
 
 import lombok.Data;
 
-@Data
+ @Data
 public class TaskDetails {
     private String title;
     private String description;

@@ -39,7 +39,7 @@ public class JwtTokenOperation implements JwtTokenService {
             SecretKey cipherKey = keyGenerator.generateKey();
             secretKey = Base64.getEncoder().encodeToString(cipherKey.getEncoded());
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            log.error("JWT algorithm want found.", e);
         }
     }
 
