@@ -23,7 +23,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class UserRepository implements UserRepositoryAdapter {
 
-    private final UserCrudJpaOperation userJpaRepository;
+    private final UserCrudJpaOperation userCrudJpaOperation;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -31,44 +31,44 @@ public class UserRepository implements UserRepositoryAdapter {
     @Override
     @Transactional
     public void createUser(User user) {
-        userJpaRepository.save(user);
+        userCrudJpaOperation.save(user);
     }
 
     @Override
     @Transactional
     public void updateUsername(Integer id, String newUsername) throws NoResultException {
-        User user = userJpaRepository.findById(id)
+        User user = userCrudJpaOperation.findById(id)
                 .orElseThrow(() -> new NoResultException(String.format(
                         "The user [id = '%d'] has not been found and their name has not been updated.", id)));
         user.setUsername(newUsername);
-        userJpaRepository.save(user);
+        userCrudJpaOperation.save(user);
     }
 
     @Override
     @Transactional
     public void updateEmail(Integer id, String newEmail) throws NoResultException {
-        User user = userJpaRepository.findById(id)
+        User user = userCrudJpaOperation.findById(id)
                 .orElseThrow(() -> new NoResultException(String
                         .format("The user [id = '%d'] has not been found and their email has not been updated.", id)));
         user.setEmail(newEmail);
-        userJpaRepository.save(user);
+        userCrudJpaOperation.save(user);
     }
 
     @Override
     @Transactional
     public void updatePassword(Integer id, String newPassword) throws NoResultException {
-        User user = userJpaRepository.findById(id)
+        User user = userCrudJpaOperation.findById(id)
                 .orElseThrow(() -> new NoResultException(String
                         .format("The user [id = '%d'] has not been found and their password has not been updated.", id)));
         user.setPassword(newPassword);
-        userJpaRepository.save(user);
+        userCrudJpaOperation.save(user);
     }
 
     @Override
     @Transactional
     public void removeUserById(Integer id) throws NoResultException {
-        if (userJpaRepository.existsById(id)) {
-            userJpaRepository.deleteById(id);
+        if (userCrudJpaOperation.existsById(id)) {
+            userCrudJpaOperation.deleteById(id);
         } else {
             throw new NoResultException(String.format("The user [id = '%d'] has not been found and has not been deleted.", id));
         }
@@ -77,21 +77,21 @@ public class UserRepository implements UserRepositoryAdapter {
     @Override
     @Transactional(readOnly = true)
     public AuthenticatedUserDetails getUserAuthorizationInfo(String email) throws UsernameNotFoundException {
-        User foundUser = userJpaRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(
+        User foundUser = userCrudJpaOperation.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(
                 String.format("The user [email = '%s'] wasn't found and has no been authenticated.", email)));
         return AuthenticatedUserDetailsMapper.toAuthenticatedUserDetails(foundUser);
     }
 
     @Override
     public User findById(Integer id) throws NoResultException {
-        return userJpaRepository.findById(id)
+        return userCrudJpaOperation.findById(id)
                 .orElseThrow(
                         () -> new NoResultException(String.format("User [id = '%d'] wasn't found.", id)));
     }
 
     @Override
     public User findByUsername(String username) throws NoResultException {
-        return userJpaRepository.findByUsername(username)
+        return userCrudJpaOperation.findByUsername(username)
                 .orElseThrow(() -> new NoResultException(
                         String.format("User [username = %s] wasn't found.", username)));
     }
@@ -99,7 +99,7 @@ public class UserRepository implements UserRepositoryAdapter {
     @Override
     @Transactional(readOnly = true)
     public User findByEmail(String email) throws NoResultException {
-        return userJpaRepository.findByEmail(email).orElseThrow(() -> new NoResultException(
+        return userCrudJpaOperation.findByEmail(email).orElseThrow(() -> new NoResultException(
                 String.format("User [email = '%s'] wasn't found.", email)));
     }
 

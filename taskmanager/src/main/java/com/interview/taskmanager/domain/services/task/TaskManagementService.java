@@ -1,6 +1,5 @@
 package com.interview.taskmanager.domain.services.task;
 
-import java.security.Principal;
 import java.util.List;
 
 import com.interview.taskmanager.common.dto.CommentDetails;
@@ -15,27 +14,27 @@ import jakarta.persistence.NoResultException;
 
 public interface TaskManagementService {
 
-    void createTask(TaskDetails taskDetails, Principal currentUser);
+    void createTask(TaskDetails taskDetails, String username);
 
-    void updateTaskById(Integer taskId, TaskDetails taskDetails, Principal currentUser);
+    void updateTaskById(Integer taskId, TaskDetails taskDetails, String username);
 
-    void removeTaskById(Integer taskId, Principal currentUser);
+    void removeTaskById(Integer taskId, String username);
 
-    void addExecutor(Integer taskId, Integer userId, Principal currentUser);
+    void addExecutor(Integer taskId, Integer userId, String username);
 
-    void removeExecutor(Integer taskId, Integer userId, Principal currentUser);
+    void removeExecutor(Integer taskId, Integer userId, String username);
 
     TaskDto findById(Integer id);
 
     List<TaskBriefInfoDto> findAllTasksByTitle(String title,Integer pageNumber) throws NoResultException;
 
-    List<OwnerTaskDto> getAssignedTasksList(Principal currentUser);
+    List<OwnerTaskDto> getAssignedTasksList(String username);
 
-    void createComment(CommentDetails commentDetails, Principal currentUser);
+    void createComment(CommentDetails commentDetails, String username);
 
-    void updateComment(Integer commentId, CommentDetails commentDetails, Principal currentUser);
+    void updateComment(Integer commentId, CommentDetails commentDetails, String username);
 
-    void removeComment(Integer commentId, Principal currentUser);
+    void removeComment(Integer commentId, String username);
 
     List<CommentDto> getCommentsByTaskId(Integer taskId, Integer pageNumber);
 

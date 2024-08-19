@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TaskRepository implements TaskRepositoryAdapter {
 
-    private final TaskCrudJpaOperation taskJpaRepository;
+    private final TaskCrudJpaOperation taskCrudJpaOperation;
 
     private final CacheManager cacheManager;
 
@@ -41,26 +41,26 @@ public class TaskRepository implements TaskRepositoryAdapter {
         Task task = new Task();
         task.setDetails(taskDetails);
         task.setAuthor(currentUser);
-        taskJpaRepository.save(task);
+        taskCrudJpaOperation.save(task);
     }
 
     @Override
     @Transactional
     public void updateTaskById(Integer id, TaskDetails taskDetails) throws NoResultException {
-        Task task = taskJpaRepository.findById(id)
+        Task task = taskCrudJpaOperation.findById(id)
                 .orElseThrow(() -> new NoResultException(
                         String.format("Task [id = '%d'] was not found and no update was performed", id)));
         cacheManager.getCache("tasks").evictIfPresent(id);
         task.setDetails(taskDetails);
-        taskJpaRepository.save(task);
+        taskCrudJpaOperation.save(task);
     }
 
     @Override
     @Transactional
     public void removeTaskById(Integer id) throws NoResultException {
-        if (taskJpaRepository.existsById(id)) {
+        if (taskCrudJpaOperation.existsById(id)) {
             cacheManager.getCache("tasks").evictIfPresent(id);
-            taskJpaRepository.deleteById(id);
+            taskCrudJpaOperation.deleteById(id);
         } else {
             throw new NoResultException(String.format("Task [id = '%d'] not found and not deleted", id));
         }
@@ -69,7 +69,7 @@ public class TaskRepository implements TaskRepositoryAdapter {
     @Override
     @Cacheable(value = "tasks", key = "#id")
     public TaskDto loadCompleteTaskInfoById(Integer id) throws NoResultException {
-        Task task = taskJpaRepository.findById(id)
+        Task task = taskCrudJpaOperation.findById(id)
                 .orElseThrow(() -> new NoResultException(String.format("Task [id = '%d'] wasn't found", id)));
         User author = getAuthorByTaskId(id);
         List<User> executors = getExecutorsByTaskId(id);
@@ -176,7 +176,7 @@ public class TaskRepository implements TaskRepositoryAdapter {
     @Override
     @Transactional(readOnly = true)
     public Task findById(Integer id) throws NoResultException {
-        return taskJpaRepository.findById(id)
+        return taskCrudJpaOperation.findById(id)
                 .orElseThrow(() -> new NoResultException(String.format("Task [id = '%d'] wasn't found", id)));
     }
 
@@ -185,7 +185,7 @@ public class TaskRepository implements TaskRepositoryAdapter {
     public List<Task> findTasksByTitle(String title, Integer pageNumber) {
         pageNumber = (pageNumber - 1) * 10;
         Pageable page = PageRequest.of(pageNumber, 10);
-        return taskJpaRepository.findAllByTitle(title, page);
+        return taskCrudJpaOperation.findAllByTitle(title, page);
     }
 
 }

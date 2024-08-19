@@ -2,7 +2,7 @@ FROM maven:3.8.4-openjdk-17-slim AS build
 WORKDIR /taskmanager
 COPY pom.xml .
 COPY src ./src
-RUN mvn clean package -Dmaven.test.skip
+RUN mvn clean package
 
 
 FROM openjdk:17-slim

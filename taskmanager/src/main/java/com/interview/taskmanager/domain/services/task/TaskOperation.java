@@ -1,6 +1,5 @@
 package com.interview.taskmanager.domain.services.task;
 
-import java.security.Principal;
 import java.util.List;
 
 import org.springframework.security.access.AccessDeniedException;
@@ -36,18 +35,18 @@ public class TaskOperation implements TaskManagementService {
     private CommentRepositoryAdapter commentRepositoryAdapter;
 
     @Override
-    public void createTask(TaskDetails taskDetails, Principal currentUser) {
-        log.info(String.format("Create new Task [author = '%s', title = '%s']", currentUser.getName(),
+    public void createTask(TaskDetails taskDetails, String username) {
+        log.info(String.format("Create new Task [author = '%s', title = '%s']", username,
                 taskDetails.getTitle()));
-        User user = userRepositoryAdapter.findByUsername(currentUser.getName());
+        User user = userRepositoryAdapter.findByUsername(username);
         taskRepositoryAdapter.createNewTask(taskDetails, user);
     }
 
     @Override
-    public void updateTaskById(Integer id, TaskDetails taskDetails, Principal currentUser)
+    public void updateTaskById(Integer id, TaskDetails taskDetails, String username)
             throws NoResultException, AccessDeniedException {
-        log.info(String.format("Updating task [id = %d] by user '%s'", id, currentUser.getName()));
-        if (taskRepositoryAdapter.isUserOwnerOfTask(currentUser.getName(), id)) {
+        log.info(String.format("Updating task [id = %d] by user '%s'", id, username));
+        if (taskRepositoryAdapter.isUserOwnerOfTask(username, id)) {
             taskRepositoryAdapter.updateTaskById(id, taskDetails);
         } else {
             throw new AccessDeniedException(String.format("Access denied. Task [id = '%d'] wasn't update", id));
@@ -55,10 +54,10 @@ public class TaskOperation implements TaskManagementService {
     }
 
     @Override
-    public void removeTaskById(Integer taskId, Principal currentUser)
+    public void removeTaskById(Integer taskId, String username)
             throws NoResultException, AccessDeniedException {
-        log.info(String.format("Delete task [id = %d] by user = '%s'", taskId, currentUser.getName()));
-        if (taskRepositoryAdapter.isUserOwnerOfTask(currentUser.getName(), taskId)) {
+        log.info(String.format("Delete task [id = %d] by user = '%s'", taskId, username));
+        if (taskRepositoryAdapter.isUserOwnerOfTask(username, taskId)) {
             taskRepositoryAdapter.removeTaskById(taskId);
         } else {
             throw new AccessDeniedException(String.format("Access denied. Task [id = '%d'] wasn't delete", taskId));
@@ -66,24 +65,27 @@ public class TaskOperation implements TaskManagementService {
     }
 
     @Override
-    public void addExecutor(Integer taskId, Integer executorId, Principal currentUser)
+    public void addExecutor(Integer taskId, Integer executorId, String username)
             throws NoResultException, AccessDeniedException {
         log.info(String.format("Add executor [id = %d] in task [id = '%d'] by user '%s'", executorId, taskId,
-                currentUser.getName()));
+                username));
         User executor = userRepositoryAdapter.findById(executorId);
-        if(taskRepositoryAdapter.isUserOwnerOfTask(currentUser.getName(), taskId)){
+        if (taskRepositoryAdapter.isUserOwnerOfTask(username, taskId)) {
             taskRepositoryAdapter.addExecutorToTask(executor, taskId);
+        } else {
+            throw new AccessDeniedException(String.format(
+                    "Access denied. Executor [id = '%d'] hasn't added in Task [id = '%d']", executorId, taskId));
         }
 
     }
 
     @Override
-    public void removeExecutor(Integer taskId, Integer executorId, Principal currentUser)
+    public void removeExecutor(Integer taskId, Integer executorId, String username)
             throws NoResultException, AccessDeniedException {
         log.info(String.format("Delete executor [id = %d] in task [id = '%d'] by user '%s'", executorId, taskId,
-                currentUser.getName()));
+                username));
         User executor = userRepositoryAdapter.findById(executorId);
-        if (taskRepositoryAdapter.isUserOwnerOfTask(currentUser.getName(), taskId)) {
+        if (taskRepositoryAdapter.isUserOwnerOfTask(username, taskId)) {
             taskRepositoryAdapter.removeExecutorFromTask(executor, taskId);
         } else {
             throw new AccessDeniedException(String.format(
@@ -97,26 +99,26 @@ public class TaskOperation implements TaskManagementService {
     }
 
     @Override
-    public List<TaskBriefInfoDto> findAllTasksByTitle(String title,Integer pageNumber) throws NoResultException {
+    public List<TaskBriefInfoDto> findAllTasksByTitle(String title, Integer pageNumber) {
         log.info(String.format("Searching tasks by title [title = %s]", title));
         return taskRepositoryAdapter.findTasksByTitle(title, pageNumber).stream().map(TaskBriefInfoDtoMapper::toDto)
                 .toList();
     }
 
     @Override
-    public List<OwnerTaskDto> getAssignedTasksList(Principal currentUser) throws NoResultException {
-        log.info(String.format("Get assigned tasks by user = '%s'", currentUser.getName()));
-        User user = userRepositoryAdapter.findUserWithAssignedTasksByUsername(currentUser.getName());
+    public List<OwnerTaskDto> getAssignedTasksList(String username) throws NoResultException {
+        log.info(String.format("Get assigned tasks by user = '%s'", username));
+        User user = userRepositoryAdapter.findUserWithAssignedTasksByUsername(username);
         return user.getOwnerTasks().stream().map(OwnerTaskDtoMapper::toDto)
                 .toList();
     }
 
     @Override
-    public void createComment(CommentDetails commentDetails, Principal currentUser)
+    public void createComment(CommentDetails commentDetails, String username)
             throws NoResultException {
         log.info(String.format("Create new comment in task [id = %d] by user '%s'", commentDetails.getTaskId(),
-                currentUser.getName()));
-        User author = userRepositoryAdapter.findByUsername(currentUser.getName());
+                username));
+        User author = userRepositoryAdapter.findByUsername(username);
         Task task = taskRepositoryAdapter.findById(commentDetails.getTaskId());
         Comment comment = new Comment();
         comment.setAuthor(author);
@@ -126,11 +128,10 @@ public class TaskOperation implements TaskManagementService {
     }
 
     @Override
-    public void updateComment(Integer commentId, CommentDetails commentDetails, Principal currentUser)
-            throws NoResultException, AccessDeniedException {
+    public void updateComment(Integer commentId, CommentDetails commentDetails, String username) throws AccessDeniedException {
         log.info(String.format("Update comment [id = %d] in task [id = %d], user '%s'", commentId,
-                commentDetails.getTaskId(), currentUser.getName()));
-        if (commentRepositoryAdapter.isUsersComment(currentUser.getName(), commentId)) {
+                commentDetails.getTaskId(), username));
+        if (commentRepositoryAdapter.isUsersComment(username, commentId)) {
             commentRepositoryAdapter.updateComment(commentId, commentDetails);
         } else {
             throw new AccessDeniedException(
@@ -139,10 +140,9 @@ public class TaskOperation implements TaskManagementService {
     }
 
     @Override
-    public void removeComment(Integer commentId, Principal currentUser)
-            throws NoResultException, AccessDeniedException {
-        log.info(String.format("Delete comment in comment [id = %d], user '%s'", commentId, currentUser.getName()));
-        if (commentRepositoryAdapter.isUsersComment(currentUser.getName(), commentId)) {
+    public void removeComment(Integer commentId, String username) throws AccessDeniedException {
+        log.info(String.format("Delete comment in comment [id = %d], user '%s'", commentId, username));
+        if (commentRepositoryAdapter.isUsersComment(username, commentId)) {
             commentRepositoryAdapter.removeComment(commentId);
         } else {
             throw new AccessDeniedException(String.format("Comment [id = %d] wasn't delete. Access denied", commentId));

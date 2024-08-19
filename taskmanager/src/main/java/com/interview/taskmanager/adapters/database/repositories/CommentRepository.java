@@ -21,31 +21,31 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CommentRepository implements CommentRepositoryAdapter {
 
-    private final CommentCrudJpaOperation commentJpaRepository;
+    private final CommentCrudJpaOperation commentCrudJpaOperation;
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     public void createComment(Comment comment) {
-        commentJpaRepository.save(comment);
+        commentCrudJpaOperation.save(comment);
     }
 
     @Override
     @Transactional
     public void updateComment(Integer id, CommentDetails commentDetails) throws NoResultException {
-        Comment comment = commentJpaRepository.findById(id)
+        Comment comment = commentCrudJpaOperation.findById(id)
                 .orElseThrow(() -> new NoResultException(
                         String.format("Comment [id = '%d'] wasn't found and hasn't been updated", id)));
         comment.setDetails(commentDetails);
-        commentJpaRepository.save(comment);
+        commentCrudJpaOperation.save(comment);
     }
 
     @Override
     @Transactional
     public void removeComment(Integer id) throws NoResultException {
-        if (commentJpaRepository.existsById(id)) {
-            commentJpaRepository.deleteById(id);
+        if (commentCrudJpaOperation.existsById(id)) {
+            commentCrudJpaOperation.deleteById(id);
         } else {
             throw new NoResultException(String.format("Comment [id = '%d'] wasn't found and hasn't been deleted", id));
         }
@@ -70,11 +70,14 @@ public class CommentRepository implements CommentRepositoryAdapter {
 
     @Override
     public boolean isUsersComment(String username, Integer commentId) {
-        TypedQuery<Boolean> query = entityManager.createQuery(
-                "SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Comment c JOIN c.author a WHERE c.id = :commentId AND a.username = :username",
-                Boolean.class);
-        query.setParameter("commentId", commentId);
-        query.setParameter("username", username);
-        return query.getSingleResult();
+        if (commentCrudJpaOperation.existsById(commentId)) {
+            TypedQuery<Boolean> query = entityManager.createQuery(
+                    "SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Comment c JOIN c.author a WHERE c.id = :commentId AND a.username = :username",
+                    Boolean.class);
+            query.setParameter("commentId", commentId);
+            query.setParameter("username", username);
+            return query.getSingleResult();
+        }
+        return false;
     }
 }
