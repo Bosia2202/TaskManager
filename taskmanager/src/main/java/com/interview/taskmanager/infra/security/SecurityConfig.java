@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers("/swagger-ui/**","/v3/**").permitAll()
                         .requestMatchers("/api/**").authenticated())
                 .sessionManagement(session -> {
                     session.maximumSessions(1);
