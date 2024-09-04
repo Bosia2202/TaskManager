@@ -3,8 +3,8 @@ package com.interview.taskmanager.infra.postgresql.models;
 import java.util.List;
 import java.util.Set;
 
-import com.interview.taskmanager.domain.taskmanager.task.TaskPriority;
-import com.interview.taskmanager.domain.taskmanager.task.TaskStatus;
+import com.interview.taskmanager.domain.task.TaskPriority;
+import com.interview.taskmanager.domain.task.TaskStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

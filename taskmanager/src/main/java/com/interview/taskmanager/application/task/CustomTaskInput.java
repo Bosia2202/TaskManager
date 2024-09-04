@@ -1,6 +1,6 @@
 package com.interview.taskmanager.application.task;
 
-import com.interview.taskmanager.domain.taskmanager.task.TaskDto;
+import com.interview.taskmanager.domain.task.TaskDto;
 
 public interface CustomTaskInput {
 
