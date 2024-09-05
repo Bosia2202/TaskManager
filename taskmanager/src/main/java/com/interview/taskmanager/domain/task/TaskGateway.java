@@ -20,7 +20,7 @@ public interface TaskGateway {
 
     void removeExecutor(Integer userId, Integer taskId);
 
-    TaskDto getCustomTask(Integer taskId);
+    TaskDto getTaskById(Integer taskId);
 
-    List<BriefInformationTaskDto> getCustomTasksByTitle(String title, Integer pageNumber, Integer pageSize);
+    List<BriefInformationTaskDto> getTasksByTitle(String title, Integer pageNumber, Integer pageSize);
 }

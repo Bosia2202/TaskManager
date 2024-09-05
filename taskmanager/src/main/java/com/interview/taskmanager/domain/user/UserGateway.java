@@ -14,7 +14,7 @@ public interface UserGateway {
 
     void remove(Integer userId);
 
-    ProfileDto getUserProfile();
+    ProfileDto getUserProfile(Integer userId);
 
     List<BriefUserInfo> getUsersByUsername(String username, Integer pageNumber, Integer pageSize);
 

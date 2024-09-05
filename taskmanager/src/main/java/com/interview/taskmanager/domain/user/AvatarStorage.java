@@ -4,7 +4,7 @@ public interface AvatarStorage {
 
     String getDefaultAvatarImgUrl();
 
-    String uploadAvatarImg(Byte[] image);
+    String uploadAvatarImg(byte[] image);
 
     void deleteAvatarImg(String oldAvatarUrl);
 }

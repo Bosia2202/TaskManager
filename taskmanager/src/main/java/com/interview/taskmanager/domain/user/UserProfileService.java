@@ -9,6 +9,6 @@ public class UserProfileService {
     }
 
     public ProfileDto getUserProfile(Integer userId) {
-        return userGateway.getUserProfile();
+        return userGateway.getUserProfile(userId);
     }
 }

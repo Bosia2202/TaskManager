@@ -10,13 +10,13 @@ public class SearchTaskService {
         this.taskGateway = taskGateway;
     }
 
-    public TaskDto getCustomTaskById(Integer taskId) {
-        return taskGateway.getCustomTask(taskId);
+    public TaskDto getTaskById(Integer taskId) {
+        return taskGateway.getTaskById(taskId);
     }
 
-    public List<BriefInformationTaskDto> getCustomTaskByTitle(String title, Integer pageNumber) {
+    public List<BriefInformationTaskDto> getTaskByTitle(String title, Integer pageNumber) {
         final Integer PAGE_SIZE = 20;
-        return taskGateway.getCustomTasksByTitle(title, pageNumber, PAGE_SIZE);
+        return taskGateway.getTasksByTitle(title, pageNumber, PAGE_SIZE);
     }
 
 }

@@ -8,13 +8,13 @@ public class UserCreationService {
 
     private final PasswordEncryptor passwordEncryptor;
 
-    public UserCreationService(AvatarStorage avatarStorage, PasswordEncryptor passwordEncryptor, UserGateway userGateway) {
+    public UserCreationService(UserGateway userGateway, AvatarStorage avatarStorage, PasswordEncryptor passwordEncryptor) {
         this.userGateway = userGateway;
         this.avatarStorage = avatarStorage;
         this.passwordEncryptor = passwordEncryptor;
     }
 
-    public void create(CreateUserDto createUserDto) {
+    public void createDefaultUser(CreateUserDto createUserDto) {
         String email = createUserDto.email();
         String defaultAvatarUrl = avatarStorage.getDefaultAvatarImgUrl();
         String username = createUserDto.username();
