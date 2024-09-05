@@ -14,11 +14,14 @@ import com.interview.taskmanager.domain.user.UserGateway;
 @Component
 public class UserGatewayAdapter implements UserGateway {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    private final TaskRepository taskRepository;
 
     @Autowired
-    public UserGatewayAdapter(UserRepository userRepository) {
+    public UserGatewayAdapter(UserRepository userRepository, TaskRepository taskRepository) {
         this.userRepository = userRepository;
+        this.taskRepository = taskRepository;
     }
 
     @Override
@@ -48,10 +51,10 @@ public class UserGatewayAdapter implements UserGateway {
 
     @Override
     public ProfileDto getUserProfile(Integer userId) {
-        SimpleProfileInfo simpleProfileInfo = userRepository.getSimpleProfileInfo(userId);
-        List<BriefInformationTaskDto> customTasks = userRepository.getUserCustomTask(userId);
-        List<BriefInformationTaskDto> executingTasks = userRepository.getUserExecutingTasks(userId);
-        return new ProfileDto(simpleProfileInfo.id(), simpleProfileInfo.avatarUrl(), simpleProfileInfo.username(),
+        DatabaseUserDto databaseUserDto = userRepository.getUserById(userId);
+        List<BriefInformationTaskDto> customTasks = taskRepository.getCustomTaskByUserId(userId);
+        List<BriefInformationTaskDto> executingTasks = taskRepository.getExecutingTasksByUserId(userId);
+        return new ProfileDto(databaseUserDto.id(), databaseUserDto.avatarUrl(), databaseUserDto.username(),
                 customTasks, executingTasks);
     }
 

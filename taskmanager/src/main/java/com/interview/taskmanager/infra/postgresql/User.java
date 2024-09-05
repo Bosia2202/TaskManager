@@ -23,33 +23,6 @@ import lombok.Data;
 @Entity
 @Table(name = "users")
 @Data
-@NamedEntityGraphs(value = {
-
-        @NamedEntityGraph(name = "user-entity-graph-authorize", attributeNodes = {
-                @NamedAttributeNode("id"),
-                @NamedAttributeNode("email"),
-                @NamedAttributeNode("username"),
-                @NamedAttributeNode("password"),
-                @NamedAttributeNode("role")
-        }),
-
-        @NamedEntityGraph(name = "user-entity-graph-with-owner-task", attributeNodes = {
-                @NamedAttributeNode("id"),
-                @NamedAttributeNode("username"),
-                @NamedAttributeNode(value = "ownerTasks", subgraph = "owner-task-subgraph"),
-        }, subgraphs = {
-                @NamedSubgraph(name = "owner-task-subgraph", attributeNodes = {
-                        @NamedAttributeNode("id"),
-                        @NamedAttributeNode("title"),
-                        @NamedAttributeNode("status"),
-                        @NamedAttributeNode("priority")
-                }),
-                @NamedSubgraph(name = "author-subgraph", attributeNodes = {
-                        @NamedAttributeNode("id"),
-                        @NamedAttributeNode("username")
-                })
-        })
-})
 class User {
 
     @Id
