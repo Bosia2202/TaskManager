@@ -1,4 +1,4 @@
-package com.interview.taskmanager.infra.postgresql.models;
+package com.interview.taskmanager.infra.postgresql;
 
 import jakarta.persistence.*;
 import lombok.Data;

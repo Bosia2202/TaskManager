@@ -11,8 +11,8 @@ public class SearchUserService {
     }
 
     public List<BriefUserInfo> getUsersByUsername(String username, Integer pageNumber) {
-        final Integer PAGE_SIZE = 20;
-        return userGateway.getUsersByUsername(username, pageNumber, PAGE_SIZE);
+        
+        return userGateway.getUsersByUsername(username, pageNumber);
     }
 
 }

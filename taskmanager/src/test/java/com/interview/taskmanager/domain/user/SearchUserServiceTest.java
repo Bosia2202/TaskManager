@@ -35,7 +35,7 @@ public class SearchUserServiceTest {
         List<BriefUserInfo> userGatewayReturnResult = Collections.singletonList(new BriefUserInfo(EXPECTED_USER_ID,
                 EXPECTED_AVATAR_URL, EXPECTED_USERNAME));
         final Integer PAGE_NUMBER = 1;
-        when(userGateway.getUsersByUsername(anyString(), anyInt(), anyInt()))
+        when(userGateway.getUsersByUsername(anyString(), anyInt()))
                 .thenReturn(userGatewayReturnResult);
         List<BriefUserInfo> searchResult = searchUserService.getUsersByUsername(EXPECTED_USERNAME, PAGE_NUMBER);
         BriefUserInfo actualBriefUserInfo = searchResult.get(0);

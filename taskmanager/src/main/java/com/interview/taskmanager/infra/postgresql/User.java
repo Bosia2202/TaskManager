@@ -1,4 +1,4 @@
-package com.interview.taskmanager.infra.postgresql.models;
+package com.interview.taskmanager.infra.postgresql;
 
 import java.util.List;
 
@@ -51,12 +51,16 @@ import lombok.Data;
         })
 })
 class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false, name = "avatar")
+    private String avatarUrl;
 
     @Column(unique = true, nullable = false, length = 50)
     private String username;

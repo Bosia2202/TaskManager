@@ -1,8 +1,7 @@
-package com.interview.taskmanager.infra.postgresql.models;
+package com.interview.taskmanager.infra.postgresql;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -10,6 +9,7 @@ import java.util.List;
 @Table(name = "comments")
 @Data
 class Comment {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;

@@ -16,7 +16,7 @@ public interface UserGateway {
 
     ProfileDto getUserProfile(Integer userId);
 
-    List<BriefUserInfo> getUsersByUsername(String username, Integer pageNumber, Integer pageSize);
+    List<BriefUserInfo> getUsersByUsername(String username, Integer pageNumber);
 
     String getUserAvatarUrl(Integer currentUserId);
 

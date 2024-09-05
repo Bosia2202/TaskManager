@@ -1,4 +1,4 @@
-package com.interview.taskmanager.infra.postgresql.models;
+package com.interview.taskmanager.infra.postgresql;
 
 import java.util.List;
 import java.util.Set;
