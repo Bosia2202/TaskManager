@@ -12,10 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.NamedAttributeNode;
-import jakarta.persistence.NamedEntityGraph;
-import jakarta.persistence.NamedEntityGraphs;
-import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -41,7 +37,7 @@ class User {
     @Column(nullable = false)
     private String password;
 
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(value = EnumType.ORDINAL)
     @Column(nullable = false)
     private Role role;
 

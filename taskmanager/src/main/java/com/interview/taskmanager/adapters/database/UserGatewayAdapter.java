@@ -1,6 +1,7 @@
 package com.interview.taskmanager.adapters.database;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -50,18 +51,23 @@ public class UserGatewayAdapter implements UserGateway {
     }
 
     @Override
-    public ProfileDto getUserProfile(Integer userId) {
-        DatabaseUserDto databaseUserDto = userRepository.getUserById(userId);
+    public Optional<ProfileDto> getUserProfile(Integer userId) {
+        Optional<DatabaseUserDto> databaseResponse = userRepository.getUserById(userId);
+        if (databaseResponse.isEmpty()) {
+            return Optional.empty();
+        }
+        DatabaseUserDto user = databaseResponse.get();
         List<BriefInformationTaskDto> customTasks = taskRepository.getCustomTaskByUserId(userId);
         List<BriefInformationTaskDto> executingTasks = taskRepository.getExecutingTasksByUserId(userId);
-        return new ProfileDto(databaseUserDto.id(), databaseUserDto.avatarUrl(), databaseUserDto.username(),
-                customTasks, executingTasks);
+        return Optional.of(new ProfileDto(user.id(), user.avatarUrl(), user.username(),
+                customTasks, executingTasks));
     }
 
     @Override
     public List<BriefUserInfo> getUsersByUsername(String username, Integer pageNumber) {
         final Integer PAGE_SIZE = 20;
-        return userRepository.getUsersByUsername(username, pageNumber, PAGE_SIZE);
+        List<DatabaseUserDto> users = userRepository.getUsersByUsername(username, pageNumber, PAGE_SIZE);
+        return users.stream().map(u -> new BriefUserInfo(u.id(), u.avatarUrl(), u.username())).toList();
     }
 
     @Override

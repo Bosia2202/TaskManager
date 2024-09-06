@@ -1,6 +1,7 @@
 package com.interview.taskmanager.domain.user;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserGateway {
 
@@ -14,7 +15,7 @@ public interface UserGateway {
 
     void remove(Integer userId);
 
-    ProfileDto getUserProfile(Integer userId);
+    Optional<ProfileDto> getUserProfile(Integer userId);
 
     List<BriefUserInfo> getUsersByUsername(String username, Integer pageNumber);
 
