@@ -1,5 +1,7 @@
 package com.interview.taskmanager.domain.user;
 
+import com.interview.taskmanager.domain.exception.UserAlreadyExistRuntimeException;
+
 public class UserCreationService {
 
     private final UserGateway userGateway;
@@ -8,7 +10,8 @@ public class UserCreationService {
 
     private final PasswordEncryptor passwordEncryptor;
 
-    public UserCreationService(UserGateway userGateway, AvatarStorage avatarStorage, PasswordEncryptor passwordEncryptor) {
+    public UserCreationService(UserGateway userGateway, AvatarStorage avatarStorage,
+            PasswordEncryptor passwordEncryptor) {
         this.userGateway = userGateway;
         this.avatarStorage = avatarStorage;
         this.passwordEncryptor = passwordEncryptor;
@@ -19,6 +22,13 @@ public class UserCreationService {
         String defaultAvatarUrl = avatarStorage.getDefaultAvatarImgUrl();
         String username = createUserDto.username();
         String password = passwordEncryptor.encryptPassword(createUserDto.password());
-        userGateway.create(email, defaultAvatarUrl, username, password, Role.USER);
+        if (!userGateway.create(email, defaultAvatarUrl, username, password, Role.USER)) {
+            throw buildUserAlreadyExistRuntimeException();
+        }
+    }
+
+    private UserAlreadyExistRuntimeException buildUserAlreadyExistRuntimeException() {
+        String message = "User with email already exist";
+        return new UserAlreadyExistRuntimeException(message);
     }
 }

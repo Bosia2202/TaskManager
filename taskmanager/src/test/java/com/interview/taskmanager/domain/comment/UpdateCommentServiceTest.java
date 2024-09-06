@@ -14,7 +14,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UpdateCommentServiceTest {
+class UpdateCommentServiceTest {
 
     @Mock
     private CommentGateway commentGateway;
@@ -37,7 +37,6 @@ public class UpdateCommentServiceTest {
         when(accessRightChecker.isUserComment(anyInt(), anyInt())).thenReturn(true);
         final String COMMENT_NEW_CONTENT = "New content";
         final Integer COMMENT_ID = 1;
-        final Integer CURRENT_USER_ID = 1;
         Assertions.assertDoesNotThrow(() -> updateCommentService.updateContent(COMMENT_NEW_CONTENT, COMMENT_ID));
     }
 
@@ -46,7 +45,6 @@ public class UpdateCommentServiceTest {
         when(accessRightChecker.isUserComment(anyInt(), anyInt())).thenReturn(false);
         final String COMMENT_NEW_CONTENT = "New content";
         final Integer COMMENT_ID = 1;
-        final Integer CURRENT_USER_ID = 1;
         Assertions.assertThrows(CommentAccessDeniedRuntimeException.class,
                 () -> updateCommentService.updateContent(COMMENT_NEW_CONTENT, COMMENT_ID));
     }

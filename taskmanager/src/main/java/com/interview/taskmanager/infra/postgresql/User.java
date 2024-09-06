@@ -31,7 +31,7 @@ class User {
     @Column(nullable = false, name = "avatar")
     private String avatarUrl;
 
-    @Column(unique = true, nullable = false, length = 50)
+    @Column(nullable = false, length = 50)
     private String username;
 
     @Column(nullable = false)

@@ -1,6 +1,11 @@
 package com.interview.taskmanager.domain.user;
 
+import com.interview.taskmanager.domain.exception.UserDoesNotDeleteRuntimeException;
 import com.interview.taskmanager.domain.security.IdentificationUserService;
+
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class UserRemoveServiceTest {
+class UserRemoveServiceTest {
 
     @Mock
     private UserGateway userGateway;
@@ -26,6 +31,14 @@ public class UserRemoveServiceTest {
 
     @Test
     void whenUseMethodRemove_thanShouldNotGetRuntimeExceptions() {
+        when(userGateway.remove(anyInt())).thenReturn(true);
         Assertions.assertDoesNotThrow(() -> userRemoveService.remove());
     }
+
+    @Test
+    void whenUseMethodRemoveAndUserDoesNotExist_thanShouldGetUserDoesNotDeleteRuntimeException() {
+        when(userGateway.remove(anyInt())).thenReturn(false);
+        Assertions.assertThrows(UserDoesNotDeleteRuntimeException.class, () -> userRemoveService.remove());
+    }
+
 }

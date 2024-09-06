@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface UserGateway {
 
-    void create(String email, String defaultAvatarUrl, String username, String password, Role role);
+    boolean create(String email, String defaultAvatarUrl, String username, String password, Role role);
 
     void updateUsername(String newUsername, Integer userId);
 
@@ -13,7 +13,7 @@ public interface UserGateway {
 
     void updatePassword(String encryptedNewPassword, Integer userId);
 
-    void remove(Integer userId);
+    boolean remove(Integer userId);
 
     Optional<ProfileDto> getUserProfile(Integer userId);
 

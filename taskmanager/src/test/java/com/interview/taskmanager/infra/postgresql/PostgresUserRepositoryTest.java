@@ -32,15 +32,28 @@ class PostgresUserRepositoryTest {
     }
 
     @Test
-    void whenUseMethodCreate_thanShouldNotGetRuntimeException() {
+    void whenUseMethodCreate_thanShouldGetTrue() {
         final String USER_EMAIL = "test@yandex.ru";
         final String USER_AVATAR_URL = "https://www.avatar.com";
         final String USER_USERNAME = "User";
         final String USER_PASSWORD = "password";
         final Role USER_ROLE = Role.USER;
-        Assertions.assertDoesNotThrow(() -> postgresUserRepository.create(USER_EMAIL, USER_AVATAR_URL, USER_USERNAME,
+        Assertions.assertTrue(() -> postgresUserRepository.create(USER_EMAIL, USER_AVATAR_URL, USER_USERNAME,
                 USER_PASSWORD, USER_ROLE));
     }
+
+    @Sql("CreateTestUser.sql")
+    @Test
+    void whenUseMethodCreateAndUserAlreadyExist_thanShouldGetFalse() {
+        final String USER_EMAIL = "test@yandex.ru";
+        final String USER_AVATAR_URL = "https://www.avatar.com";
+        final String USER_USERNAME = "User";
+        final String USER_PASSWORD = "password";
+        final Role USER_ROLE = Role.USER;
+        Assertions.assertFalse(() -> postgresUserRepository.create(USER_EMAIL, USER_AVATAR_URL, USER_USERNAME,
+                USER_PASSWORD, USER_ROLE));
+    }
+
 
     @Sql("CreateTestUser.sql")
     @Test
@@ -138,9 +151,14 @@ class PostgresUserRepositoryTest {
 
     @Sql("CreateTestUser.sql")
     @Test
-    void whenUseMethodRemove_thanShouldGetNoResultException() {
+    void whenUseMethodRemove_thanShouldGetTrue() {
         final Integer USER_ID = 1;
-        postgresUserRepository.remove(USER_ID);
-        Assertions.assertFalse( () -> postgresUserRepository.getUserById(USER_ID).isPresent());
+        Assertions.assertTrue(postgresUserRepository.remove(USER_ID));
+    }
+
+    @Test
+    void whenUseMethodRemoveAndUserDoesNotExist_thanShouldGetFalse() {
+        final Integer USER_ID = 1;
+        Assertions.assertFalse(postgresUserRepository.remove(USER_ID));
     }
 }

@@ -7,7 +7,7 @@ import com.interview.taskmanager.domain.user.Role;
 
 public interface UserRepository {
 
-    void create(String email, String defaultAvatarUrl, String username, String password, Role role);
+    boolean create(String email, String defaultAvatarUrl, String username, String password, Role role);
 
     Optional<DatabaseUserDto> getUserById(Integer userId);
 
@@ -23,6 +23,6 @@ public interface UserRepository {
 
     void updatePassword(String encryptedNewPassword, Integer userId);
 
-    void remove(Integer userId);
+    boolean remove(Integer userId);
 
 }

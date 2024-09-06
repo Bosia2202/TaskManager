@@ -26,8 +26,8 @@ public class UserGatewayAdapter implements UserGateway {
     }
 
     @Override
-    public void create(String email, String defaultAvatarUrl, String username, String password, Role role) {
-        userRepository.create(email, defaultAvatarUrl, username, password, role);
+    public boolean create(String email, String defaultAvatarUrl, String username, String password, Role role) {
+        return userRepository.create(email, defaultAvatarUrl, username, password, role);
     }
 
     @Override
@@ -46,8 +46,8 @@ public class UserGatewayAdapter implements UserGateway {
     }
 
     @Override
-    public void remove(Integer userId) {
-        userRepository.remove(userId);
+    public boolean remove(Integer userId) {
+        return userRepository.remove(userId);
     }
 
     @Override

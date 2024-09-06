@@ -1,4 +1,4 @@
-package com.interview.taskmanager.infra;
+package com.interview.taskmanager.infra.redis;
 
 import java.util.concurrent.TimeUnit;
 

@@ -22,7 +22,15 @@ public class PostgresUserRepository implements UserRepository {
 
     @Override
     @Transactional
-    public void create(String email, String defaultAvatarUrl, String username, String password, Role role) {
+    public boolean create(String email, String defaultAvatarUrl, String username, String password, Role role) {
+        Optional<User> existingUser = entityManager
+                .createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+                .setParameter("email", email)
+                .getResultStream()
+                .findFirst();
+        if (existingUser.isPresent()) {
+            return false;
+        }
         User user = new User();
         user.setEmail(email);
         user.setAvatarUrl(defaultAvatarUrl);
@@ -30,11 +38,13 @@ public class PostgresUserRepository implements UserRepository {
         user.setPassword(password);
         user.setRole(role);
         entityManager.persist(user);
+        return true;
     }
+
     @Override
     public Optional<DatabaseUserDto> getUserById(Integer userId) {
         User user = entityManager.find(User.class, userId);
-        if(user == null) {
+        if (user == null) {
             return Optional.empty();
         }
         return Optional.of(new DatabaseUserDto(user.getId(), user.getEmail(), user.getAvatarUrl(), user.getUsername(),
@@ -70,7 +80,6 @@ public class PostgresUserRepository implements UserRepository {
         return request.getSingleResult();
     }
 
-    
     @Override
     @Transactional
     public void updateAvatarUrl(String newAvatarUrl, Integer userId) {
@@ -97,9 +106,25 @@ public class PostgresUserRepository implements UserRepository {
 
     @Override
     @Transactional
-    public void remove(Integer userId) {
-        User user = entityManager.find(User.class, userId);
-        entityManager.remove(user);
+    public boolean remove(Integer userId) {
+        if (!isUserExist(userId)) {
+            return false;
+        }
+        String query = "DELETE FROM User u WHERE u.id = :userId";
+        entityManager.createQuery(query)
+                .setParameter("userId", userId)
+                .executeUpdate();
+        return true;
+    }
+
+    private boolean isUserExist(Integer userId) {
+        StringBuilder strBuilder = new StringBuilder();
+        String query = strBuilder.append("SELECT CASE WHEN EXISTS ")
+                .append("(SELECT 1 FROM User u WHERE u.id = :userId) ")
+                .append("THEN TRUE ELSE FALSE END").toString();
+        TypedQuery<Boolean> typedQuery = entityManager.createQuery(query, Boolean.class);
+        typedQuery.setParameter("userId", userId);
+        return typedQuery.getSingleResult();
     }
 
 }
