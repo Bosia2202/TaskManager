@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface TaskGateway {
 
-    void create(TaskDto taskDto, Integer authorId);
+    boolean create(TaskDto taskDto, Integer authorId);
 
     void updateTitle(Integer taskId, String newTitle);
 
@@ -18,7 +18,7 @@ public interface TaskGateway {
 
     void addExecutor(Integer userId, Integer taskId);
 
-    void removeExecutor(Integer userId, Integer taskId);
+    boolean removeExecutor(Integer userId, Integer taskId);
 
     TaskDto getTaskById(Integer taskId);
 

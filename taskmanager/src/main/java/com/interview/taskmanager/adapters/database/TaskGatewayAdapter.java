@@ -17,9 +17,8 @@ public class TaskGatewayAdapter implements TaskGateway {
     }
 
     @Override
-    public void create(TaskDto taskDto, Integer authorId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'create'");
+    public boolean create(TaskDto taskDto, Integer authorId) {
+        
     }
 
     @Override
@@ -59,7 +58,7 @@ public class TaskGatewayAdapter implements TaskGateway {
     }
 
     @Override
-    public void removeExecutor(Integer userId, Integer taskId) {
+    public boolean removeExecutor(Integer userId, Integer taskId) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'removeExecutor'");
     }

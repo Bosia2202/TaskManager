@@ -23,12 +23,7 @@ public class PostgresUserRepository implements UserRepository {
     @Override
     @Transactional
     public boolean create(String email, String defaultAvatarUrl, String username, String password, Role role) {
-        Optional<User> existingUser = entityManager
-                .createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
-                .setParameter("email", email)
-                .getResultStream()
-                .findFirst();
-        if (existingUser.isPresent()) {
+        if (isUserEmailExist(email)) {
             return false;
         }
         User user = new User();
@@ -39,6 +34,16 @@ public class PostgresUserRepository implements UserRepository {
         user.setRole(role);
         entityManager.persist(user);
         return true;
+    }
+
+    private boolean isUserEmailExist(String email) {
+        StringBuilder strBuilder = new StringBuilder();
+        String query = strBuilder.append("SELECT CASE WHEN EXISTS ")
+                .append("(SELECT 1 FROM User u WHERE u.email = :email) ")
+                .append("THEN TRUE ELSE FALSE END").toString();
+        TypedQuery<Boolean> typedQuery = entityManager.createQuery(query, Boolean.class);
+        typedQuery.setParameter("email", email);
+        return typedQuery.getSingleResult();
     }
 
     @Override
