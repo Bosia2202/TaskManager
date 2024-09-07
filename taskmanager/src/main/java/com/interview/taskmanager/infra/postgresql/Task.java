@@ -17,10 +17,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedAttributeNode;
-import jakarta.persistence.NamedEntityGraph;
-import jakarta.persistence.NamedEntityGraphs;
-import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -28,28 +24,6 @@ import lombok.Data;
 @Entity
 @Table(name = "tasks")
 @Data
-@NamedEntityGraphs(value = {
-        @NamedEntityGraph(name = "task-entity-graph", attributeNodes = {
-                @NamedAttributeNode("id"),
-                @NamedAttributeNode("title"),
-                @NamedAttributeNode("description"),
-                @NamedAttributeNode("status"),
-                @NamedAttributeNode("priority"),
-                @NamedAttributeNode(value = "author", subgraph = "user-subgraph"),
-                @NamedAttributeNode(value = "executors", subgraph = "executors-subgraph"),
-                @NamedAttributeNode(value = "comments", subgraph = "comment-subgraph")
-        }, subgraphs = {
-                @NamedSubgraph(name = "user-subgraph", attributeNodes = {
-                        @NamedAttributeNode("id"),
-                        @NamedAttributeNode("username")}) ,
-                @NamedSubgraph(name = "executors-subgraph", attributeNodes = {
-                        @NamedAttributeNode("id"),
-                        @NamedAttributeNode("username")}),
-                @NamedSubgraph(name = "comment-subgraph", attributeNodes = {
-                        @NamedAttributeNode("content"),
-                        @NamedAttributeNode(value = "author", subgraph = "user-subgraph")})
-        })
-})
 
 class Task {
     @Id
@@ -74,7 +48,7 @@ class Task {
 
     @ManyToMany
     @JoinTable(name = "tasks_executors", joinColumns = @JoinColumn(name = "task_id"), inverseJoinColumns = @JoinColumn(name = "executor_id"))
-    private Set<User> executors;
+    private List<User> executors;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "task")
     private List<Comment> comments;

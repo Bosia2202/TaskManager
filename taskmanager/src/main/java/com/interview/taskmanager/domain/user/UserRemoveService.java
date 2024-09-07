@@ -1,6 +1,6 @@
 package com.interview.taskmanager.domain.user;
 
-import com.interview.taskmanager.domain.exception.UserDoesNotDeleteRuntimeException;
+import com.interview.taskmanager.domain.exception.UserNotDeletedRuntimeException;
 import com.interview.taskmanager.domain.security.IdentificationUserService;
 
 public class UserRemoveService {
@@ -17,7 +17,7 @@ public class UserRemoveService {
     public void remove() {
         Integer currentUserId = identificationUserService.getCurrentUserId();
         if (!userGateway.remove(currentUserId)) {
-            throw new UserDoesNotDeleteRuntimeException("User wasn't deleted");
+            throw new UserNotDeletedRuntimeException("User wasn't deleted");
         }
     }
 

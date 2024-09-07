@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.interview.taskmanager.domain.task.BriefInformationTaskDto;
+import com.interview.taskmanager.domain.task.BriefTaskDto;
 import com.interview.taskmanager.domain.user.BriefUserInfo;
 import com.interview.taskmanager.domain.user.ProfileDto;
 import com.interview.taskmanager.domain.user.Role;
@@ -57,17 +57,17 @@ public class UserGatewayAdapter implements UserGateway {
             return Optional.empty();
         }
         DatabaseUserDto user = databaseResponse.get();
-        List<BriefInformationTaskDto> customTasks = taskRepository.getCustomTaskByUserId(userId);
-        List<BriefInformationTaskDto> executingTasks = taskRepository.getExecutingTasksByUserId(userId);
+        List<BriefTaskDto> customTasks = taskRepository.getCustomTaskByUserId(userId);
+        List<BriefTaskDto> executingTasks = taskRepository.getExecutingTasksByUserId(userId);
         return Optional.of(new ProfileDto(user.id(), user.avatarUrl(), user.username(),
                 customTasks, executingTasks));
     }
 
     @Override
-    public List<BriefUserInfo> getUsersByUsername(String username, Integer pageNumber) {
+    public List<BriefUserInfo> getUsersByUsername(String username, Integer pageNumber) {    //TODO: Добавить pageSize в бизнес логику и в метод.
         final Integer PAGE_SIZE = 20;
         List<DatabaseUserDto> users = userRepository.getUsersByUsername(username, pageNumber, PAGE_SIZE);
-        return users.stream().map(u -> new BriefUserInfo(u.id(), u.avatarUrl(), u.username())).toList();
+        return users.stream().map(u -> new BriefUserInfo(u.id(), u.avatarUrl(), u.username())).toList(); 
     }
 
     @Override

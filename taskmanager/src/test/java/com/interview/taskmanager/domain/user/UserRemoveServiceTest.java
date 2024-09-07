@@ -1,6 +1,6 @@
 package com.interview.taskmanager.domain.user;
 
-import com.interview.taskmanager.domain.exception.UserDoesNotDeleteRuntimeException;
+import com.interview.taskmanager.domain.exception.UserNotDeletedRuntimeException;
 import com.interview.taskmanager.domain.security.IdentificationUserService;
 
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -38,7 +38,7 @@ class UserRemoveServiceTest {
     @Test
     void whenUseMethodRemoveAndUserDoesNotExist_thanShouldGetUserDoesNotDeleteRuntimeException() {
         when(userGateway.remove(anyInt())).thenReturn(false);
-        Assertions.assertThrows(UserDoesNotDeleteRuntimeException.class, () -> userRemoveService.remove());
+        Assertions.assertThrows(UserNotDeletedRuntimeException.class, () -> userRemoveService.remove());
     }
 
 }

@@ -1,10 +1,12 @@
 package com.interview.taskmanager.adapters.database;
 
 import java.util.List;
+import java.util.Optional;
 
-import com.interview.taskmanager.domain.task.BriefInformationTaskDto;
+import com.interview.taskmanager.domain.task.BriefTaskDto;
 import com.interview.taskmanager.domain.task.TaskDto;
 import com.interview.taskmanager.domain.task.TaskGateway;
+import com.interview.taskmanager.domain.task.TaskPresentationDto;
 import com.interview.taskmanager.domain.task.TaskPriority;
 import com.interview.taskmanager.domain.task.TaskStatus;
 
@@ -17,62 +19,53 @@ public class TaskGatewayAdapter implements TaskGateway {
     }
 
     @Override
-    public boolean create(TaskDto taskDto, Integer authorId) {
-        
+    public void create(TaskDto taskDto, Integer authorId) {
+        taskRepository.create(taskDto, authorId);
     }
 
     @Override
     public void updateTitle(Integer taskId, String newTitle) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateTitle'");
+        taskRepository.updateTitle(newTitle, taskId);
     }
 
     @Override
     public void updateDescription(Integer taskId, String description) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateDescription'");
+        taskRepository.updateDescription(description, taskId);
     }
 
     @Override
     public void updateStatus(Integer taskId, TaskStatus status) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateStatus'");
+        taskRepository.updateStatus(status, taskId);
     }
 
     @Override
     public void updatePriority(Integer taskId, TaskPriority priority) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updatePriority'");
+        taskRepository.updatePriority(priority, taskId);
     }
 
     @Override
-    public void remove(Integer taskId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'remove'");
+    public boolean remove(Integer taskId) {
+        return taskRepository.remove(taskId);
     }
 
     @Override
-    public void addExecutor(Integer userId, Integer taskId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addExecutor'");
+    public boolean addExecutor(Integer executorId, Integer taskId) {
+        return taskRepository.addExecutor(executorId, taskId);
     }
 
     @Override
-    public boolean removeExecutor(Integer userId, Integer taskId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeExecutor'");
+    public boolean removeExecutor(Integer executorId, Integer taskId) {
+        return taskRepository.removeExecutor(executorId, taskId);
     }
 
     @Override
-    public TaskDto getTaskById(Integer taskId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTaskById'");
+    public Optional<TaskPresentationDto> getTaskById(Integer taskId) {
+        return taskRepository.getTaskById(taskId);
     }
 
     @Override
-    public List<BriefInformationTaskDto> getTasksByTitle(String title, Integer pageNumber, Integer pageSize) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTasksByTitle'");
+    public List<BriefTaskDto> getTasksByTitle(String title, Integer pageNumber, Integer pageSize) {
+        return taskRepository.getTasksByTitle(title, pageNumber, pageSize);
     }
 
 }

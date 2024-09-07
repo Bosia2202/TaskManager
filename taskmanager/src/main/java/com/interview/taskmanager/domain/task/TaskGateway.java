@@ -1,10 +1,11 @@
 package com.interview.taskmanager.domain.task;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TaskGateway {
 
-    boolean create(TaskDto taskDto, Integer authorId);
+    void create(TaskDto taskDto, Integer authorId);
 
     void updateTitle(Integer taskId, String newTitle);
 
@@ -14,13 +15,13 @@ public interface TaskGateway {
 
     void updatePriority(Integer taskId, TaskPriority priority);
 
-    void remove(Integer taskId);
+    boolean remove(Integer taskId);
 
-    void addExecutor(Integer userId, Integer taskId);
+    boolean addExecutor(Integer userId, Integer taskId);
 
     boolean removeExecutor(Integer userId, Integer taskId);
 
-    TaskDto getTaskById(Integer taskId);
+    Optional<TaskPresentationDto> getTaskById(Integer taskId);
 
-    List<BriefInformationTaskDto> getTasksByTitle(String title, Integer pageNumber, Integer pageSize);
+    List<BriefTaskDto> getTasksByTitle(String title, Integer pageNumber, Integer pageSize);
 }

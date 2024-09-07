@@ -2,6 +2,8 @@ package com.interview.taskmanager.domain.task;
 
 import java.util.List;
 
+import com.interview.taskmanager.domain.exception.TaskNotFoundRuntimeException;
+
 public class SearchTaskService {
 
     private final TaskGateway taskGateway;
@@ -10,11 +12,12 @@ public class SearchTaskService {
         this.taskGateway = taskGateway;
     }
 
-    public TaskDto getTaskById(Integer taskId) {
-        return taskGateway.getTaskById(taskId);
+    public TaskPresentationDto getTaskById(Integer taskId) {
+        return taskGateway.getTaskById(taskId).orElseThrow(() -> new TaskNotFoundRuntimeException(
+                String.format("Task with id = '%d' wasn't found.", taskId)));
     }
 
-    public List<BriefInformationTaskDto> getTaskByTitle(String title, Integer pageNumber) {
+    public List<BriefTaskDto> getTaskByTitle(String title, Integer pageNumber) {
         final Integer PAGE_SIZE = 20;
         return taskGateway.getTasksByTitle(title, pageNumber, PAGE_SIZE);
     }

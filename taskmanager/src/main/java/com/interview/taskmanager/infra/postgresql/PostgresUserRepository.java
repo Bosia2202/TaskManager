@@ -132,4 +132,5 @@ public class PostgresUserRepository implements UserRepository {
         return typedQuery.getSingleResult();
     }
 
+    // TODO: Сделать методы обновления boolean и исправить domain логику под них путем добавления ошибок, так же сделать рефакторинг кода по образцу TaskRepository
 }

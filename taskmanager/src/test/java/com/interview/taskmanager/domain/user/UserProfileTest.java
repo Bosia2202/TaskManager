@@ -1,7 +1,7 @@
 package com.interview.taskmanager.domain.user;
 
 import com.interview.taskmanager.domain.exception.UserProfileNotFoundRuntimeException;
-import com.interview.taskmanager.domain.task.BriefInformationTaskDto;
+import com.interview.taskmanager.domain.task.BriefTaskDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,8 +34,8 @@ class UserProfileTest {
         final Integer EXPECTED_USER_ID = 1;
         final String EXPECTED_AVATAR_URL = "https://www.test.com/avatar";
         final String EXPECTED_USERNAME = "User";
-        final List<BriefInformationTaskDto> EXPECTED_CUSTOM_TASKS = Collections.emptyList();
-        final List<BriefInformationTaskDto> EXPECTED_EXECUTING_TASKS = Collections.emptyList();
+        final List<BriefTaskDto> EXPECTED_CUSTOM_TASKS = Collections.emptyList();
+        final List<BriefTaskDto> EXPECTED_EXECUTING_TASKS = Collections.emptyList();
         ProfileDto profileDto = new ProfileDto(EXPECTED_USER_ID, EXPECTED_AVATAR_URL, EXPECTED_USERNAME,
                 EXPECTED_CUSTOM_TASKS, EXPECTED_EXECUTING_TASKS);
         when(userGateway.getUserProfile(anyInt())).thenReturn(Optional.of(profileDto));
