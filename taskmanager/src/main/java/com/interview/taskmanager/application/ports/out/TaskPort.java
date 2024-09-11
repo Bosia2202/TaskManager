@@ -6,8 +6,6 @@ import java.util.Optional;
 import com.interview.taskmanager.application.dto.DatabaseTaskDto;
 import com.interview.taskmanager.application.dto.NewTaskDto;
 import com.interview.taskmanager.domain.Task;
-import com.interview.taskmanager.domain.TaskPriority;
-import com.interview.taskmanager.domain.TaskStatus;
 
 public interface TaskPort {
 
@@ -17,9 +15,9 @@ public interface TaskPort {
 
     void updateDescription(Integer taskId, String description);
 
-    void updateStatus(Integer taskId, TaskStatus status);
+    void updateStatus(Integer taskId, String status);
 
-    void updatePriority(Integer taskId, TaskPriority priority);
+    void updatePriority(Integer taskId, String priority);
 
     boolean remove(Integer taskId);
 

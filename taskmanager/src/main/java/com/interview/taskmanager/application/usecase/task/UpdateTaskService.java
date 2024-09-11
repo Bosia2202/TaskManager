@@ -4,8 +4,6 @@ import com.interview.taskmanager.application.dto.DatabaseTaskDto;
 import com.interview.taskmanager.application.ports.in.SecurityPort;
 import com.interview.taskmanager.application.ports.out.TaskPort;
 import com.interview.taskmanager.domain.Task;
-import com.interview.taskmanager.domain.TaskPriority;
-import com.interview.taskmanager.domain.TaskStatus;
 import com.interview.taskmanager.infra.exception.TaskAccessDeniedRuntimeException;
 import com.interview.taskmanager.infra.exception.TaskNotFoundRuntimeException;
 
@@ -55,8 +53,7 @@ public class UpdateTaskService {
         Integer currentUserId = securityPort.getCurrentUserId();
         checkAccessRight(taskId, currentUserId);
         DatabaseTaskDto databaseTask = getTaskFromDatabaseById(taskId);
-        TaskStatus newStatus = TaskStatus.valueOf(status);
-        Task task = new Task(databaseTask.id(), databaseTask.title(), databaseTask.description(), newStatus,
+        Task task = new Task(databaseTask.id(), databaseTask.title(), databaseTask.description(), status,
                 databaseTask.priority(), databaseTask.authorId());
         taskPort.update(task);
     }
@@ -65,9 +62,8 @@ public class UpdateTaskService {
         Integer currentUserId = securityPort.getCurrentUserId();
         checkAccessRight(taskId, currentUserId);
         DatabaseTaskDto databaseTask = getTaskFromDatabaseById(taskId);
-        TaskPriority newPriority = TaskPriority.valueOf(priority);
         Task task = new Task(databaseTask.id(), databaseTask.title(), databaseTask.description(), databaseTask.status(),
-                newPriority, databaseTask.authorId());
+                priority, databaseTask.authorId());
         taskPort.update(task);
     }
 

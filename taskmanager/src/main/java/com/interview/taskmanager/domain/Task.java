@@ -12,21 +12,30 @@ public class Task {
     private TaskPriority priority;
     private Integer authorId;
 
-    public Task(Integer id, String title, String description, TaskStatus status, TaskPriority priority,
+    public Task(Integer id, String title, String description, String status, String priority,
             Integer authorId) {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.status = status;
-        this.priority = priority;
+        this.status = TaskStatus.valueOf(status);
+        this.priority = TaskPriority.valueOf(priority);
         this.authorId = authorId;
     }
 
-    public Task(String title, String description, TaskStatus status, TaskPriority priority, Integer authorId) {
+    public Task(String title, String description, String status, String priority, Integer authorId) {
         this.title = title;
         this.description = description;
-        this.status = status;
-        this.priority = priority;
+        this.status = TaskStatus.valueOf(status);
+        this.priority = TaskPriority.valueOf(priority);
         this.authorId = authorId;
     }
+
+    public Integer getStatus() {
+        return status.ordinal();
+    }
+
+    public Integer getPriority() {
+        return priority.ordinal();
+    }
+
 }

@@ -1,5 +1,5 @@
 package com.interview.taskmanager.domain;
 
-public enum TaskPriority {
+enum TaskPriority {
     LOWER, MIDDLE, HIGH
 }
