@@ -3,14 +3,14 @@ package com.interview.taskmanager.adapters.database;
 import java.util.List;
 import java.util.Optional;
 
-import com.interview.taskmanager.domain.task.BriefTaskDto;
-import com.interview.taskmanager.domain.task.TaskDto;
-import com.interview.taskmanager.domain.task.TaskGateway;
-import com.interview.taskmanager.domain.task.TaskPresentationDto;
-import com.interview.taskmanager.domain.task.TaskPriority;
-import com.interview.taskmanager.domain.task.TaskStatus;
+import com.interview.taskmanager.application.dto.NewTaskDto;
+import com.interview.taskmanager.application.ports.out.TaskPort;
+import com.interview.taskmanager.application.usecase.task.TaskPreviewDto;
+import com.interview.taskmanager.domain.TaskPriority;
+import com.interview.taskmanager.domain.TaskStatus;
+import com.interview.taskmanager.application.usecase.task.TaskPresentationDto;
 
-public class TaskGatewayAdapter implements TaskGateway {
+public class TaskGatewayAdapter implements TaskPort {
 
     private TaskRepository taskRepository;
 
@@ -19,7 +19,7 @@ public class TaskGatewayAdapter implements TaskGateway {
     }
 
     @Override
-    public void create(TaskDto taskDto, Integer authorId) {
+    public void create(NewTaskDto taskDto, Integer authorId) {
         taskRepository.create(taskDto, authorId);
     }
 
@@ -64,7 +64,7 @@ public class TaskGatewayAdapter implements TaskGateway {
     }
 
     @Override
-    public List<BriefTaskDto> getTasksByTitle(String title, Integer pageNumber, Integer pageSize) {
+    public List<TaskPreviewDto> getTasksByTitle(String title, Integer pageNumber, Integer pageSize) {
         return taskRepository.getTasksByTitle(title, pageNumber, pageSize);
     }
 

@@ -1,6 +1,5 @@
 package com.interview.taskmanager.domain.comment;
 
-import com.interview.taskmanager.domain.security.IdentificationUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,11 +7,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.interview.taskmanager.application.dao.CommentDao;
+import com.interview.taskmanager.application.usecase.comment.CreateCommentService;
+import com.interview.taskmanager.application.usecase.security.IdentificationUserService;
+
 @ExtendWith(MockitoExtension.class)
 public class CreateCommentServiceTest {
 
     @Mock
-    private CommentGateway commentGateway;
+    private CommentDao commentGateway;
 
     @Mock
     private IdentificationUserService identificationUserService;

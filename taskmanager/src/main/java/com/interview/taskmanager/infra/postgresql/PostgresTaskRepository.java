@@ -6,12 +6,12 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.interview.taskmanager.adapters.database.TaskRepository;
-import com.interview.taskmanager.domain.task.BriefTaskDto;
-import com.interview.taskmanager.domain.task.TaskAuthorDto;
-import com.interview.taskmanager.domain.task.TaskDto;
-import com.interview.taskmanager.domain.task.TaskPresentationDto;
-import com.interview.taskmanager.domain.task.TaskPriority;
-import com.interview.taskmanager.domain.task.TaskStatus;
+import com.interview.taskmanager.application.usecase.task.TaskPreviewDto;
+import com.interview.taskmanager.domain.TaskPriority;
+import com.interview.taskmanager.domain.TaskStatus;
+import com.interview.taskmanager.application.dto.NewTaskDto;
+import com.interview.taskmanager.application.usecase.task.TaskAuthorDto;
+import com.interview.taskmanager.application.usecase.task.TaskPresentationDto;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -24,7 +24,7 @@ public class PostgresTaskRepository implements TaskRepository {
     private EntityManager entityManager;
 
     @Override
-    public boolean create(TaskDto taskDto, Integer authorId) {
+    public boolean create(NewTaskDto taskDto, Integer authorId) {
         Task task = new Task();
         task.setTitle(taskDto.title());
         task.setDescription(taskDto.description());
@@ -62,32 +62,32 @@ public class PostgresTaskRepository implements TaskRepository {
     }
 
     @Override
-    public List<BriefTaskDto> getTasksByTitle(String title, Integer pageNumber, Integer pageSize) {
+    public List<TaskPreviewDto> getTasksByTitle(String title, Integer pageNumber, Integer pageSize) {
         TypedQuery<Task> query = entityManager.createQuery("SELECT t FROM Task t WHERE t.title = :title", Task.class);
         query.setParameter("title", title)
                 .setFirstResult((pageNumber - 1) * pageSize)
                 .setMaxResults(pageSize);
-        return query.getResultStream().map(t -> new BriefTaskDto(t.getTitle(), t.getStatus(), t.getPriority(),
+        return query.getResultStream().map(t -> new TaskPreviewDto(t.getTitle(), t.getStatus(), t.getPriority(),
                 getTaskAuthor(t.getId()))).toList();
     }
 
     @Override
-    public List<BriefTaskDto> getCustomTaskByUserId(Integer userId) {
+    public List<TaskPreviewDto> getCustomTaskByUserId(Integer userId) {
         TypedQuery<Task> query = entityManager.createQuery("SELECT t FROM Task t WHERE t.author.id = :userId",
                 Task.class);
         return query.setParameter("userId", userId).getResultStream()
-                .map(t -> new BriefTaskDto(t.getTitle(), t.getStatus(), t.getPriority(),
+                .map(t -> new TaskPreviewDto(t.getTitle(), t.getStatus(), t.getPriority(),
                         getTaskAuthor(t.getId())))
                 .toList();
 
     }
 
     @Override
-    public List<BriefTaskDto> getExecutingTasksByUserId(Integer userId) {
+    public List<TaskPreviewDto> getExecutingTasksByUserId(Integer userId) {
         TypedQuery<Task> query = entityManager.createQuery("SELECT t FROM Task t WHERE t.executors.id = :userId",
                 Task.class);
         return query.setParameter("userId", userId).getResultStream()
-                .map(t -> new BriefTaskDto(t.getTitle(), t.getStatus(), t.getPriority(),
+                .map(t -> new TaskPreviewDto(t.getTitle(), t.getStatus(), t.getPriority(),
                         getTaskAuthor(t.getId())))
                 .toList();
     }

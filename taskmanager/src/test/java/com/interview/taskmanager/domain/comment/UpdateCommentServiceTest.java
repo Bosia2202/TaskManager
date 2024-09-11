@@ -1,14 +1,17 @@
 package com.interview.taskmanager.domain.comment;
 
-import com.interview.taskmanager.domain.exception.CommentAccessDeniedRuntimeException;
-import com.interview.taskmanager.domain.security.AccessRightChecker;
-import com.interview.taskmanager.domain.security.IdentificationUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.interview.taskmanager.application.dao.CommentDao;
+import com.interview.taskmanager.application.usecase.comment.UpdateCommentService;
+import com.interview.taskmanager.application.usecase.exception.CommentAccessDeniedRuntimeException;
+import com.interview.taskmanager.application.usecase.security.AccessRightChecker;
+import com.interview.taskmanager.application.usecase.security.IdentificationUserService;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
@@ -17,7 +20,7 @@ import static org.mockito.Mockito.when;
 class UpdateCommentServiceTest {
 
     @Mock
-    private CommentGateway commentGateway;
+    private CommentDao commentGateway;
 
     @Mock
     private IdentificationUserService identificationUserService;

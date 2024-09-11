@@ -6,14 +6,15 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.interview.taskmanager.domain.task.BriefTaskDto;
-import com.interview.taskmanager.domain.user.BriefUserInfo;
-import com.interview.taskmanager.domain.user.ProfileDto;
-import com.interview.taskmanager.domain.user.Role;
-import com.interview.taskmanager.domain.user.UserGateway;
+import com.interview.taskmanager.adapters.database.in.springsecurity.Role;
+import com.interview.taskmanager.application.dto.DatabaseUserDto;
+import com.interview.taskmanager.application.dto.UserPreviewDto;
+import com.interview.taskmanager.application.dto.UserDto;
+import com.interview.taskmanager.application.ports.out.UserPort;
+import com.interview.taskmanager.application.usecase.task.TaskPreviewDto;
 
 @Component
-public class UserGatewayAdapter implements UserGateway {
+public class UserGatewayAdapter implements UserPort {
 
     private final UserRepository userRepository;
 
@@ -51,23 +52,23 @@ public class UserGatewayAdapter implements UserGateway {
     }
 
     @Override
-    public Optional<ProfileDto> getUserProfile(Integer userId) {
+    public Optional<UserDto> getUserProfile(Integer userId) {
         Optional<DatabaseUserDto> databaseResponse = userRepository.getUserById(userId);
         if (databaseResponse.isEmpty()) {
             return Optional.empty();
         }
         DatabaseUserDto user = databaseResponse.get();
-        List<BriefTaskDto> customTasks = taskRepository.getCustomTaskByUserId(userId);
-        List<BriefTaskDto> executingTasks = taskRepository.getExecutingTasksByUserId(userId);
-        return Optional.of(new ProfileDto(user.id(), user.avatarUrl(), user.username(),
+        List<TaskPreviewDto> customTasks = taskRepository.getCustomTaskByUserId(userId);
+        List<TaskPreviewDto> executingTasks = taskRepository.getExecutingTasksByUserId(userId);
+        return Optional.of(new UserDto(user.id(), user.avatarUrl(), user.username(),
                 customTasks, executingTasks));
     }
 
     @Override
-    public List<BriefUserInfo> getUsersByUsername(String username, Integer pageNumber) {    //TODO: Добавить pageSize в бизнес логику и в метод.
+    public List<UserPreviewDto> getUsersByUsername(String username, Integer pageNumber) {    //TODO: Добавить pageSize в бизнес логику и в метод.
         final Integer PAGE_SIZE = 20;
         List<DatabaseUserDto> users = userRepository.getUsersByUsername(username, pageNumber, PAGE_SIZE);
-        return users.stream().map(u -> new BriefUserInfo(u.id(), u.avatarUrl(), u.username())).toList(); 
+        return users.stream().map(u -> new UserPreviewDto(u.id(), u.avatarUrl(), u.username())).toList(); 
     }
 
     @Override

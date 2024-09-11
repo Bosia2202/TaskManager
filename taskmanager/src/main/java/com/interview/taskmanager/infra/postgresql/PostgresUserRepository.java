@@ -6,9 +6,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.interview.taskmanager.adapters.database.DatabaseUserDto;
 import com.interview.taskmanager.adapters.database.UserRepository;
-import com.interview.taskmanager.domain.user.Role;
+import com.interview.taskmanager.adapters.database.in.springsecurity.Role;
+import com.interview.taskmanager.application.dto.DatabaseUserDto;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

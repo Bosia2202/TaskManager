@@ -1,13 +1,17 @@
 package com.interview.taskmanager.domain.user;
 
-import com.interview.taskmanager.domain.exception.UserProfileNotFoundRuntimeException;
-import com.interview.taskmanager.domain.task.BriefTaskDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.interview.taskmanager.application.dto.UserDto;
+import com.interview.taskmanager.application.ports.out.UserPort;
+import com.interview.taskmanager.application.usecase.exception.UserProfileNotFoundRuntimeException;
+import com.interview.taskmanager.application.usecase.task.TaskPreviewDto;
+import com.interview.taskmanager.application.usecase.user.UserProfileService;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +24,7 @@ import static org.mockito.Mockito.when;
 class UserProfileTest {
 
     @Mock
-    private UserGateway userGateway;
+    private UserPort userGateway;
 
     private UserProfileService userProfileService;
 
@@ -34,12 +38,12 @@ class UserProfileTest {
         final Integer EXPECTED_USER_ID = 1;
         final String EXPECTED_AVATAR_URL = "https://www.test.com/avatar";
         final String EXPECTED_USERNAME = "User";
-        final List<BriefTaskDto> EXPECTED_CUSTOM_TASKS = Collections.emptyList();
-        final List<BriefTaskDto> EXPECTED_EXECUTING_TASKS = Collections.emptyList();
-        ProfileDto profileDto = new ProfileDto(EXPECTED_USER_ID, EXPECTED_AVATAR_URL, EXPECTED_USERNAME,
+        final List<TaskPreviewDto> EXPECTED_CUSTOM_TASKS = Collections.emptyList();
+        final List<TaskPreviewDto> EXPECTED_EXECUTING_TASKS = Collections.emptyList();
+        UserDto profileDto = new UserDto(EXPECTED_USER_ID, EXPECTED_AVATAR_URL, EXPECTED_USERNAME,
                 EXPECTED_CUSTOM_TASKS, EXPECTED_EXECUTING_TASKS);
         when(userGateway.getUserProfile(anyInt())).thenReturn(Optional.of(profileDto));
-        ProfileDto actualProfileDto = userProfileService.getUserProfile(EXPECTED_USER_ID);
+        UserDto actualProfileDto = userProfileService.getUserProfile(EXPECTED_USER_ID);
         Assertions.assertEquals(EXPECTED_USER_ID, actualProfileDto.id());
         Assertions.assertEquals(EXPECTED_AVATAR_URL, actualProfileDto.avatarUrl());
         Assertions.assertEquals(EXPECTED_USERNAME, actualProfileDto.username());
@@ -51,7 +55,7 @@ class UserProfileTest {
     void whenUseMethodGetUserProfileAndUserDoesNotExist_thanShouldGetUserProfileNotFoundRuntimeException() {
         final Integer USER_ID = 1;
         when(userGateway.getUserProfile(anyInt())).thenReturn(Optional.empty());
-        Assertions.assertThrows(UserProfileNotFoundRuntimeException.class,
+        Assertions.assertThrows(UserNotFoundRuntimeException.class,
                 () -> userProfileService.getUserProfile(USER_ID));
     }
 }

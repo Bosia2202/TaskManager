@@ -2,7 +2,8 @@ package com.interview.taskmanager.infra.postgresql;
 
 import java.util.List;
 
-import com.interview.taskmanager.domain.user.Role;
+import com.interview.taskmanager.adapters.database.in.springsecurity.Role;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

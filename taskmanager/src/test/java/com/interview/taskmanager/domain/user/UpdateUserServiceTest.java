@@ -1,13 +1,18 @@
 package com.interview.taskmanager.domain.user;
 
-import com.interview.taskmanager.domain.exception.IncorrectPasswordRuntimeException;
-import com.interview.taskmanager.domain.security.IdentificationUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.interview.taskmanager.application.ports.out.AvatarPort;
+import com.interview.taskmanager.application.ports.out.UserPort;
+import com.interview.taskmanager.application.usecase.exception.IncorrectPasswordRuntimeException;
+import com.interview.taskmanager.application.usecase.security.IdentificationUserService;
+import com.interview.taskmanager.application.usecase.user.PasswordEncryptor;
+import com.interview.taskmanager.application.usecase.user.UpdateUserService;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
@@ -16,10 +21,10 @@ import static org.mockito.Mockito.when;
 public class UpdateUserServiceTest {
 
     @Mock
-    private UserGateway userGateway;
+    private UserPort userGateway;
 
     @Mock
-    private AvatarStorage avatarStorage;
+    private AvatarPort avatarStorage;
 
     @Mock
     private IdentificationUserService identificationUserService;
@@ -27,11 +32,11 @@ public class UpdateUserServiceTest {
     @Mock
     private PasswordEncryptor passwordEncryptor;
 
-    private UserUpdateService userUpdateService;
+    private UpdateUserService userUpdateService;
 
     @BeforeEach
     void init() {
-        this.userUpdateService = new UserUpdateService(userGateway, avatarStorage, identificationUserService, passwordEncryptor);
+        this.userUpdateService = new UpdateUserService(userGateway, avatarStorage, identificationUserService, passwordEncryptor);
     }
 
     @Test

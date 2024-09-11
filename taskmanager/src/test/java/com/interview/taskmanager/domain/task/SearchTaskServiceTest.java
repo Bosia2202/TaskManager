@@ -7,7 +7,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.interview.taskmanager.domain.exception.TaskNotFoundRuntimeException;
+import com.interview.taskmanager.application.ports.out.TaskPort;
+import com.interview.taskmanager.application.usecase.exception.TaskNotFoundRuntimeException;
+import com.interview.taskmanager.application.usecase.search.SearchTaskService;
+import com.interview.taskmanager.application.usecase.task.TaskPreviewDto;
+import com.interview.taskmanager.domain.TaskPriority;
+import com.interview.taskmanager.domain.TaskStatus;
+import com.interview.taskmanager.application.usecase.task.TaskAuthorDto;
+import com.interview.taskmanager.application.usecase.task.TaskPresentationDto;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +28,7 @@ import static org.mockito.Mockito.when;
 class SearchTaskServiceTest {
 
     @Mock
-    private TaskGateway taskGateway;
+    private TaskPort taskGateway;
 
     private SearchTaskService searchTaskService;
 
@@ -69,14 +76,14 @@ class SearchTaskServiceTest {
         final Integer EXPECTED_AUTHOR_ID = 1;
         final String EXPECTED_AUTHOR_USERNAME = "Author";
         TaskAuthorDto taskAuthorDto = new TaskAuthorDto(EXPECTED_AUTHOR_ID, EXPECTED_AUTHOR_USERNAME);
-        BriefTaskDto briefTaskDto = new BriefTaskDto(EXPECTED_TASK_TITLE, EXPECTED_TASK_STATUS, EXPECTED_TASK_PRIORITY,
+        TaskPreviewDto briefTaskDto = new TaskPreviewDto(EXPECTED_TASK_TITLE, EXPECTED_TASK_STATUS, EXPECTED_TASK_PRIORITY,
                 taskAuthorDto);
         when(taskGateway.getTasksByTitle(anyString(), anyInt(), anyInt())).thenReturn(Collections
                 .singletonList(briefTaskDto));
         final String TASK_TITLE = "Title";
         final Integer PAGE_NUMBER = 1;
-        List<BriefTaskDto> tasks = searchTaskService.getTaskByTitle(TASK_TITLE, PAGE_NUMBER);
-        BriefTaskDto actualBriefInfoTask = tasks.get(0);
+        List<TaskPreviewDto> tasks = searchTaskService.getTaskByTitle(TASK_TITLE, PAGE_NUMBER);
+        TaskPreviewDto actualBriefInfoTask = tasks.get(0);
         Assertions.assertEquals(EXPECTED_TASK_TITLE, actualBriefInfoTask.title());
         Assertions.assertEquals(EXPECTED_TASK_STATUS, actualBriefInfoTask.status());
         Assertions.assertEquals(EXPECTED_TASK_PRIORITY, actualBriefInfoTask.priority());

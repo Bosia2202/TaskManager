@@ -1,8 +1,5 @@
 package com.interview.taskmanager.domain.user;
 
-import com.interview.taskmanager.domain.exception.UserNotDeletedRuntimeException;
-import com.interview.taskmanager.domain.security.IdentificationUserService;
-
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
@@ -13,20 +10,25 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.interview.taskmanager.application.ports.out.UserPort;
+import com.interview.taskmanager.application.usecase.exception.UserNotDeletedRuntimeException;
+import com.interview.taskmanager.application.usecase.security.IdentificationUserService;
+import com.interview.taskmanager.application.usecase.user.RemoveUserService;
+
 @ExtendWith(MockitoExtension.class)
 class UserRemoveServiceTest {
 
     @Mock
-    private UserGateway userGateway;
+    private UserPort userGateway;
 
     @Mock
     private IdentificationUserService identificationUserService;
 
-    private UserRemoveService userRemoveService;
+    private RemoveUserService userRemoveService;
 
     @BeforeEach
     void init() {
-        this.userRemoveService = new UserRemoveService(userGateway, identificationUserService);
+        this.userRemoveService = new RemoveUserService(userGateway, identificationUserService);
     }
 
     @Test

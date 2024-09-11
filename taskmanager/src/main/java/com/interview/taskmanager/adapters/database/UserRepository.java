@@ -3,7 +3,8 @@ package com.interview.taskmanager.adapters.database;
 import java.util.List;
 import java.util.Optional;
 
-import com.interview.taskmanager.domain.user.Role;
+import com.interview.taskmanager.adapters.database.in.springsecurity.Role;
+import com.interview.taskmanager.application.dto.DatabaseUserDto;
 
 public interface UserRepository {
 

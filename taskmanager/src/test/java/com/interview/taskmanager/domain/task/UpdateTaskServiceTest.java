@@ -1,14 +1,19 @@
 package com.interview.taskmanager.domain.task;
 
-import com.interview.taskmanager.domain.exception.TaskAccessDeniedRuntimeException;
-import com.interview.taskmanager.domain.security.AccessRightChecker;
-import com.interview.taskmanager.domain.security.IdentificationUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.interview.taskmanager.application.ports.out.TaskPort;
+import com.interview.taskmanager.application.usecase.exception.TaskAccessDeniedRuntimeException;
+import com.interview.taskmanager.application.usecase.security.AccessRightChecker;
+import com.interview.taskmanager.application.usecase.security.IdentificationUserService;
+import com.interview.taskmanager.application.usecase.task.UpdateTaskService;
+import com.interview.taskmanager.domain.TaskPriority;
+import com.interview.taskmanager.domain.TaskStatus;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
@@ -17,7 +22,7 @@ import static org.mockito.Mockito.when;
 public class UpdateTaskServiceTest {
 
     @Mock
-    private TaskGateway taskGateway;
+    private TaskPort taskGateway;
 
     @Mock
     private IdentificationUserService identificationUserService;

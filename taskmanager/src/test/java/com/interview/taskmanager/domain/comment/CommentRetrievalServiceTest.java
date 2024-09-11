@@ -7,6 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.interview.taskmanager.application.dao.CommentDao;
+import com.interview.taskmanager.application.usecase.comment.CommentDto;
+import com.interview.taskmanager.application.usecase.comment.CommentRetrievalService;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -17,7 +21,7 @@ import static org.mockito.Mockito.when;
 public class CommentRetrievalServiceTest {
 
     @Mock
-    private CommentGateway commentGateway;
+    private CommentDao commentGateway;
 
     private CommentRetrievalService commentRetrievalService;
 

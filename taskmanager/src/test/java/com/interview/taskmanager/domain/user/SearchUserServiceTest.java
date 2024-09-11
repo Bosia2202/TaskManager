@@ -7,6 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.interview.taskmanager.application.dto.UserPreviewDto;
+import com.interview.taskmanager.application.ports.out.UserPort;
+import com.interview.taskmanager.application.usecase.search.SearchUserService;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -18,7 +22,7 @@ import static org.mockito.Mockito.when;
 public class SearchUserServiceTest {
 
     @Mock
-    private UserGateway userGateway;
+    private UserPort userGateway;
 
     private SearchUserService searchUserService;
 
@@ -32,13 +36,13 @@ public class SearchUserServiceTest {
         final Integer EXPECTED_USER_ID = 1;
         final String EXPECTED_AVATAR_URL = "https://www.test.com/avatar";
         final String EXPECTED_USERNAME = "User";
-        List<BriefUserInfo> userGatewayReturnResult = Collections.singletonList(new BriefUserInfo(EXPECTED_USER_ID,
+        List<UserPreviewDto> userGatewayReturnResult = Collections.singletonList(new UserPreviewDto(EXPECTED_USER_ID,
                 EXPECTED_AVATAR_URL, EXPECTED_USERNAME));
         final Integer PAGE_NUMBER = 1;
         when(userGateway.getUsersByUsername(anyString(), anyInt()))
                 .thenReturn(userGatewayReturnResult);
-        List<BriefUserInfo> searchResult = searchUserService.getUsersByUsername(EXPECTED_USERNAME, PAGE_NUMBER);
-        BriefUserInfo actualBriefUserInfo = searchResult.get(0);
+        List<UserPreviewDto> searchResult = searchUserService.getUsersByUsername(EXPECTED_USERNAME, PAGE_NUMBER);
+        UserPreviewDto actualBriefUserInfo = searchResult.get(0);
         Assertions.assertEquals(EXPECTED_USER_ID, actualBriefUserInfo.id());
         Assertions.assertEquals(EXPECTED_AVATAR_URL, actualBriefUserInfo.avatarUrl());
         Assertions.assertEquals(EXPECTED_USERNAME, actualBriefUserInfo.username());
