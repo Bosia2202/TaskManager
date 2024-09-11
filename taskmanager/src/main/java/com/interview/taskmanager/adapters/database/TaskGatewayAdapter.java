@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import com.interview.taskmanager.application.dto.NewTaskDto;
+import com.interview.taskmanager.application.dto.TaskPreviewDto;
 import com.interview.taskmanager.application.ports.out.TaskPort;
-import com.interview.taskmanager.application.usecase.task.TaskPreviewDto;
 import com.interview.taskmanager.domain.TaskPriority;
 import com.interview.taskmanager.domain.TaskStatus;
 import com.interview.taskmanager.application.usecase.task.TaskPresentationDto;

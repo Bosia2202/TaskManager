@@ -3,11 +3,11 @@ package com.interview.taskmanager.application.usecase.search;
 import java.util.List;
 
 import com.interview.taskmanager.application.dto.DatabaseUserDto;
+import com.interview.taskmanager.application.dto.TaskPreviewDto;
 import com.interview.taskmanager.application.dto.UserPreviewDto;
 import com.interview.taskmanager.application.dto.UserDto;
 import com.interview.taskmanager.application.ports.out.TaskPort;
 import com.interview.taskmanager.application.ports.out.UserPort;
-import com.interview.taskmanager.application.usecase.task.TaskPreviewDto;
 import com.interview.taskmanager.infra.exception.UserNotFoundRuntimeException;
 
 public class SearchUserService {

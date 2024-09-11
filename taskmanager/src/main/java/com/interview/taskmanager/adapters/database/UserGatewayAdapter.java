@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 
 import com.interview.taskmanager.adapters.database.in.springsecurity.Role;
 import com.interview.taskmanager.application.dto.DatabaseUserDto;
+import com.interview.taskmanager.application.dto.TaskPreviewDto;
 import com.interview.taskmanager.application.dto.UserPreviewDto;
 import com.interview.taskmanager.application.dto.UserDto;
 import com.interview.taskmanager.application.ports.out.UserPort;
-import com.interview.taskmanager.application.usecase.task.TaskPreviewDto;
 
 @Component
 public class UserGatewayAdapter implements UserPort {

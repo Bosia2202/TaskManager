@@ -7,10 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.interview.taskmanager.application.dto.TaskPreviewDto;
 import com.interview.taskmanager.application.ports.out.TaskPort;
 import com.interview.taskmanager.application.usecase.exception.TaskNotFoundRuntimeException;
 import com.interview.taskmanager.application.usecase.search.SearchTaskService;
-import com.interview.taskmanager.application.usecase.task.TaskPreviewDto;
 import com.interview.taskmanager.domain.TaskPriority;
 import com.interview.taskmanager.domain.TaskStatus;
 import com.interview.taskmanager.application.usecase.task.TaskAuthorDto;

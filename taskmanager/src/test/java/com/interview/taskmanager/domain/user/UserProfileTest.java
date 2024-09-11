@@ -7,10 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.interview.taskmanager.application.dto.TaskPreviewDto;
 import com.interview.taskmanager.application.dto.UserDto;
 import com.interview.taskmanager.application.ports.out.UserPort;
 import com.interview.taskmanager.application.usecase.exception.UserProfileNotFoundRuntimeException;
-import com.interview.taskmanager.application.usecase.task.TaskPreviewDto;
 import com.interview.taskmanager.application.usecase.user.UserProfileService;
 
 import java.util.Collections;

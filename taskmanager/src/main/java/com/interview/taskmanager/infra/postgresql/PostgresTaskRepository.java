@@ -6,10 +6,10 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.interview.taskmanager.adapters.database.TaskRepository;
-import com.interview.taskmanager.application.usecase.task.TaskPreviewDto;
 import com.interview.taskmanager.domain.TaskPriority;
 import com.interview.taskmanager.domain.TaskStatus;
 import com.interview.taskmanager.application.dto.NewTaskDto;
+import com.interview.taskmanager.application.dto.TaskPreviewDto;
 import com.interview.taskmanager.application.usecase.task.TaskAuthorDto;
 import com.interview.taskmanager.application.usecase.task.TaskPresentationDto;
 

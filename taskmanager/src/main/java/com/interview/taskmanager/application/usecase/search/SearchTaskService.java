@@ -3,9 +3,10 @@ package com.interview.taskmanager.application.usecase.search;
 import java.util.List;
 
 import com.interview.taskmanager.application.dto.DatabaseTaskDto;
+import com.interview.taskmanager.application.dto.TaskDto;
+import com.interview.taskmanager.application.dto.TaskPreviewDto;
 import com.interview.taskmanager.application.ports.out.TaskPort;
 import com.interview.taskmanager.application.ports.out.UserPort;
-import com.interview.taskmanager.application.usecase.task.TaskPreviewDto;
 import com.interview.taskmanager.infra.exception.TaskNotFoundRuntimeException;
 
 public class SearchTaskService {
