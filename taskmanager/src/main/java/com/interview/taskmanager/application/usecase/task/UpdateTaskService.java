@@ -53,8 +53,9 @@ public class UpdateTaskService {
         Integer currentUserId = securityPort.getCurrentUserId();
         checkAccessRight(taskId, currentUserId);
         DatabaseTaskDto databaseTask = getTaskFromDatabaseById(taskId);
-        Task task = new Task(databaseTask.id(), databaseTask.title(), databaseTask.description(), status,
+        Task task = new Task(databaseTask.id(), databaseTask.title(), databaseTask.description(), databaseTask.status(),
                 databaseTask.priority(), databaseTask.authorId());
+        task.setStatus(status);
         taskPort.update(task);
     }
 
@@ -63,7 +64,8 @@ public class UpdateTaskService {
         checkAccessRight(taskId, currentUserId);
         DatabaseTaskDto databaseTask = getTaskFromDatabaseById(taskId);
         Task task = new Task(databaseTask.id(), databaseTask.title(), databaseTask.description(), databaseTask.status(),
-                priority, databaseTask.authorId());
+                databaseTask.priority(), databaseTask.authorId());
+        task.setPriority(priority);
         taskPort.update(task);
     }
 
