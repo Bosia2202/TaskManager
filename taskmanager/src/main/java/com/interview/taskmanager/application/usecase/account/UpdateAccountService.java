@@ -1,4 +1,4 @@
-package com.interview.taskmanager.application.usecase.user;
+package com.interview.taskmanager.application.usecase.account;
 
 import com.interview.taskmanager.application.dto.DatabaseUserDto;
 import com.interview.taskmanager.application.ports.in.SecurityPort;
@@ -8,7 +8,7 @@ import com.interview.taskmanager.domain.User;
 import com.interview.taskmanager.infra.exception.IncorrectPasswordRuntimeException;
 import com.interview.taskmanager.infra.exception.UserNotFoundRuntimeException;
 
-public class UpdateUserService {
+public class UpdateAccountService {
 
     private final UserPort userPort;
 
@@ -16,7 +16,7 @@ public class UpdateUserService {
 
     private final SecurityPort securityPort;
 
-    public UpdateUserService(UserPort userPort, AvatarPort avatarPort, SecurityPort securityPort) {
+    public UpdateAccountService(UserPort userPort, AvatarPort avatarPort, SecurityPort securityPort) {
         this.userPort = userPort;
         this.avatarPort = avatarPort;
         this.securityPort = securityPort;

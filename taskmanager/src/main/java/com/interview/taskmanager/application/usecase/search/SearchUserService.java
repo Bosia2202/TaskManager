@@ -36,7 +36,7 @@ public class SearchUserService {
                                 .toList();
                 return new UserDto(userId, databaseUser.avatarUrl(), databaseUser.username(), customTasks,
                                 executedTasks);
-        } //TODO:Подумать как решить проблемму  'userPort.getUsernameById(task.authorId()'
+        }
 
         private UserNotFoundRuntimeException buildUserNotFoundRuntimeException(Integer userId) {
                 String message = String.format("User profile with id = '%d' wasn't found", userId);

@@ -8,27 +8,19 @@ import com.interview.taskmanager.domain.User;
 
 public interface UserPort {
 
-    void updateUsername(String newUsername, Integer userId);
-
-    String getPassword(Integer userId);
-
-    void updatePassword(String encryptedNewPassword, Integer userId);
-
-    boolean remove(Integer userId);
+    boolean create(User user, String role);
 
     Optional<DatabaseUserDto> getUserById(Integer userId);
 
     List<DatabaseUserDto> getUsersByUsername(String username, Integer pageNumber);
 
-    String getUserAvatarUrl(Integer currentUserId);
-
-    void updateUserAvatarUrl(String newAvatarUrl, Integer currentUserId);
-
-    boolean create(User user);
+    String getUsernameById(Integer authorId);
 
     Optional<User> findByEmail(String email);
 
     void updateUser(User user);
 
-    String getUsernameById(Integer authorId);
+    boolean remove(Integer userId);
+
+    DatabaseUserDto getUserByEmail(String email);
 }

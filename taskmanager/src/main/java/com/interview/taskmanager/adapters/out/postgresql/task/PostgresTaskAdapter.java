@@ -1,20 +1,18 @@
-package com.interview.taskmanager.adapters.out.postgresql;
+package com.interview.taskmanager.adapters.out.postgresql.task;
 
 import java.util.List;
 import java.util.Optional;
 
+import com.interview.taskmanager.adapters.out.postgresql.task.repository.TaskRepository;
 import com.interview.taskmanager.application.dto.NewTaskDto;
 import com.interview.taskmanager.application.dto.TaskPreviewDto;
 import com.interview.taskmanager.application.ports.out.TaskPort;
-import com.interview.taskmanager.domain.TaskPriority;
-import com.interview.taskmanager.domain.TaskStatus;
-import com.interview.taskmanager.application.usecase.task.TaskPresentationDto;
 
-public class TaskGatewayAdapter implements TaskPort {
+public class PostgresTaskAdapter implements TaskPort {
 
     private TaskRepository taskRepository;
 
-    public TaskGatewayAdapter(TaskRepository taskRepository) {
+    public PostgresTaskAdapter(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 

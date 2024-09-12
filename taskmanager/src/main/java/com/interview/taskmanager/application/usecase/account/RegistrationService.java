@@ -1,36 +1,36 @@
-package com.interview.taskmanager.application.usecase.user;
+package com.interview.taskmanager.application.usecase.account;
 
-import com.interview.taskmanager.application.dto.NewUserDto;
+import com.interview.taskmanager.application.dto.SignUp;
 import com.interview.taskmanager.application.ports.in.SecurityPort;
 import com.interview.taskmanager.application.ports.out.AvatarPort;
 import com.interview.taskmanager.application.ports.out.UserPort;
 import com.interview.taskmanager.domain.User;
 import com.interview.taskmanager.infra.exception.UserAlreadyExistRuntimeException;
 
-public class CreateUserService {
-
-    private final UserPort userPort;
+public class RegistrationService {
 
     private final AvatarPort avatarPort;
 
     private final SecurityPort securityPort;
 
-    public CreateUserService(UserPort userPort, AvatarPort avatarPort, SecurityPort securityPort) {
-        this.userPort = userPort;
+    private final UserPort userPort;
+
+    public RegistrationService(AvatarPort avatarPort, SecurityPort securityPort, UserPort userPort) {
         this.avatarPort = avatarPort;
         this.securityPort = securityPort;
+        this.userPort = userPort;
     }
 
-    public void createDefaultUser(NewUserDto newUserDto) {
-        String email = newUserDto.email();
+    public void registration(SignUp signUp) {
+        String email = signUp.email();
         String defaultAvatarUrl = avatarPort.getDefaultAvatarImgUrl();
-        String username = newUserDto.username();
-        String password = securityPort.encryptPassword(newUserDto.password());
+        String username = signUp.username();
+        String password = securityPort.encryptPassword(signUp.password());
         User user = new User(email, defaultAvatarUrl, username, password);
         if (userPort.findByEmail(email).isPresent()) {
             String message = "User with email already exist";
             throw new UserAlreadyExistRuntimeException(message);
         }
-        userPort.create(user);
+        userPort.create(user, "USER");
     }
 }

@@ -11,9 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.interview.taskmanager.application.ports.out.UserPort;
+import com.interview.taskmanager.application.usecase.account.RemoveAccountService;
 import com.interview.taskmanager.application.usecase.exception.UserNotDeletedRuntimeException;
 import com.interview.taskmanager.application.usecase.security.IdentificationUserService;
-import com.interview.taskmanager.application.usecase.user.RemoveUserService;
 
 @ExtendWith(MockitoExtension.class)
 class UserRemoveServiceTest {
@@ -24,11 +24,11 @@ class UserRemoveServiceTest {
     @Mock
     private IdentificationUserService identificationUserService;
 
-    private RemoveUserService userRemoveService;
+    private RemoveAccountService userRemoveService;
 
     @BeforeEach
     void init() {
-        this.userRemoveService = new RemoveUserService(userGateway, identificationUserService);
+        this.userRemoveService = new RemoveAccountService(userGateway, identificationUserService);
     }
 
     @Test

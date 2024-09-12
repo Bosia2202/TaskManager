@@ -1,10 +1,8 @@
-package com.interview.taskmanager.adapters.out.postgresql;
+package com.interview.taskmanager.adapters.out.postgresql.user.repository;
 
 import java.util.List;
 
-import com.interview.taskmanager.adapters.database.in.springsecurity.Role;
-import com.interview.taskmanager.adapters.out.postgresql.comment.repository.Comment;
-import com.interview.taskmanager.adapters.out.postgresql.comment.repository.SubComment;
+import com.interview.taskmanager.adapters.in.springsecurity.Role;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -44,15 +42,4 @@ class User {
     @Column(nullable = false)
     private Role role;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
-    private List<Task> ownerTasks;
-
-    @ManyToMany(mappedBy = "executors")
-    private List<Task> executedTasks;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
-    private List<Comment> comments;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
-    private List<SubComment> subComments;
 }

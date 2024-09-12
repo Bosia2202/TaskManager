@@ -1,7 +1,7 @@
 package com.interview.taskmanager.infra.postgresql;
 
 import com.interview.taskmanager.adapters.database.in.springsecurity.Role;
-import com.interview.taskmanager.adapters.out.postgresql.PostgresUserRepository;
+import com.interview.taskmanager.adapters.out.postgresql.user.PostgresUserRepository;
 import com.interview.taskmanager.application.dto.DatabaseUserDto;
 
 import java.util.List;

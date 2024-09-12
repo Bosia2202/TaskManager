@@ -9,10 +9,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.interview.taskmanager.application.ports.out.AvatarPort;
 import com.interview.taskmanager.application.ports.out.UserPort;
+import com.interview.taskmanager.application.usecase.account.UpdateAccountService;
 import com.interview.taskmanager.application.usecase.exception.IncorrectPasswordRuntimeException;
 import com.interview.taskmanager.application.usecase.security.IdentificationUserService;
 import com.interview.taskmanager.application.usecase.user.PasswordEncryptor;
-import com.interview.taskmanager.application.usecase.user.UpdateUserService;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
@@ -32,11 +32,11 @@ public class UpdateUserServiceTest {
     @Mock
     private PasswordEncryptor passwordEncryptor;
 
-    private UpdateUserService userUpdateService;
+    private UpdateAccountService userUpdateService;
 
     @BeforeEach
     void init() {
-        this.userUpdateService = new UpdateUserService(userGateway, avatarStorage, identificationUserService, passwordEncryptor);
+        this.userUpdateService = new UpdateAccountService(userGateway, avatarStorage, identificationUserService, passwordEncryptor);
     }
 
     @Test

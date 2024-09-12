@@ -1,4 +1,4 @@
-package com.interview.taskmanager.adapters.out.postgresql;
+package com.interview.taskmanager.adapters.out.postgresql.user.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.interview.taskmanager.adapters.database.in.springsecurity.Role;
+import com.interview.taskmanager.adapters.in.springsecurity.Role;
 import com.interview.taskmanager.application.dto.DatabaseUserDto;
 
 import jakarta.persistence.EntityManager;
@@ -14,7 +14,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 
 @Repository
-public class PostgresUserRepository implements UserRepository {
+public class UserRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
