@@ -1,4 +1,4 @@
-package com.interview.taskmanager.adapters.database;
+package com.interview.taskmanager.adapters.out.postgresql;
 
 import java.util.List;
 import java.util.Optional;

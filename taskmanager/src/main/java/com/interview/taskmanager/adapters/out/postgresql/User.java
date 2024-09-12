@@ -1,8 +1,10 @@
-package com.interview.taskmanager.infra.postgresql;
+package com.interview.taskmanager.adapters.out.postgresql;
 
 import java.util.List;
 
 import com.interview.taskmanager.adapters.database.in.springsecurity.Role;
+import com.interview.taskmanager.adapters.out.postgresql.comment.repository.Comment;
+import com.interview.taskmanager.adapters.out.postgresql.comment.repository.SubComment;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

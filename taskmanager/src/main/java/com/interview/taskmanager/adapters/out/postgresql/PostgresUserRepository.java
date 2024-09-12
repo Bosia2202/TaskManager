@@ -1,4 +1,4 @@
-package com.interview.taskmanager.infra.postgresql;
+package com.interview.taskmanager.adapters.out.postgresql;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.interview.taskmanager.adapters.database.UserRepository;
 import com.interview.taskmanager.adapters.database.in.springsecurity.Role;
 import com.interview.taskmanager.application.dto.DatabaseUserDto;
 

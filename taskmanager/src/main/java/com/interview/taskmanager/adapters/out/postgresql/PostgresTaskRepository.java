@@ -1,11 +1,10 @@
-package com.interview.taskmanager.infra.postgresql;
+package com.interview.taskmanager.adapters.out.postgresql;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import com.interview.taskmanager.adapters.database.TaskRepository;
 import com.interview.taskmanager.domain.TaskPriority;
 import com.interview.taskmanager.domain.TaskStatus;
 import com.interview.taskmanager.application.dto.NewTaskDto;

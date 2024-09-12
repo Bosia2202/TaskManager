@@ -1,24 +1,29 @@
 package com.interview.taskmanager.application.ports.out;
 
 import java.util.List;
+import java.util.Optional;
 
-import com.interview.taskmanager.application.dto.NewCommentDto;
+import com.interview.taskmanager.application.dto.DatabaseCommentDto;
+import com.interview.taskmanager.application.dto.DatabaseSubCommentDto;
 import com.interview.taskmanager.domain.Comment;
 
 public interface CommentPort {
 
-    void save(NewCommentDto newCommentDto);
+    void save(Comment comment);
 
-    void saveSubComment(NewCommentDto newCommentDto, Integer commentId);
+    void saveSubComment(Comment comment, Integer commentId);
 
-    List<Comment> getComments(Integer taskId, Integer pageNumber, Integer pAGE_SIZE);
+    List<DatabaseCommentDto> getComments(Integer taskId, Integer pageNumber, Integer pageSize);
 
-    List<Comment> getSubComments(Integer commentId, Integer pageNumber, Integer pAGE_SIZE);
+    List<DatabaseSubCommentDto> getSubComments(Integer commentId, Integer pageNumber, Integer pageSize);
+
+    Optional<DatabaseCommentDto> getCommentById(Integer commentId);
+
+    Optional<Integer> getAuthorId(Integer commentId);
+
+    void update(Comment comment);
 
     void remove(Integer commentId);
 
-    Integer getAuthorId(Integer commentId);
-
-    void updateComment(String newContent, Integer commentId);
-
+    void removeSubComment(Integer commentId);
 }

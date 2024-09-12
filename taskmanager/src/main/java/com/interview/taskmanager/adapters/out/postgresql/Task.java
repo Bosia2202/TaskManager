@@ -1,8 +1,9 @@
-package com.interview.taskmanager.infra.postgresql;
+package com.interview.taskmanager.adapters.out.postgresql;
 
 import java.util.List;
 import java.util.Set;
 
+import com.interview.taskmanager.adapters.out.postgresql.comment.repository.Comment;
 import com.interview.taskmanager.domain.TaskPriority;
 import com.interview.taskmanager.domain.TaskStatus;
 

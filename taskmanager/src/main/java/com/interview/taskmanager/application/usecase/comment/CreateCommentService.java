@@ -2,7 +2,7 @@ package com.interview.taskmanager.application.usecase.comment;
 
 import org.springframework.stereotype.Service;
 
-import com.interview.taskmanager.application.dto.NewCommentDto;
+import com.interview.taskmanager.domain.Comment;
 import com.interview.taskmanager.application.ports.in.SecurityPort;
 import com.interview.taskmanager.application.ports.out.CommentPort;
 
@@ -20,15 +20,13 @@ public class CreateCommentService {
 
     public void createComment(String content, Integer taskId) {
         Integer currentUserId = securityPort.getCurrentUserId();
-        String currentUsername = securityPort.getCurrentUsername();
-        NewCommentDto newCommentDto = new NewCommentDto(content, currentUserId, currentUsername, taskId);
-        commentPort.save(newCommentDto);
+        Comment comment = new Comment(content, currentUserId, taskId);
+        commentPort.save(comment);
     }
 
     public void createSubComment(String content, Integer commentId, Integer taskId) {
         Integer currentUserId = securityPort.getCurrentUserId();
-        String currentUsername = securityPort.getCurrentUsername();
-        NewCommentDto newCommentDto = new NewCommentDto(content, currentUserId, currentUsername, taskId);
-        commentPort.saveSubComment(newCommentDto, commentId);
+        Comment comment = new Comment(content, currentUserId, taskId);
+        commentPort.saveSubComment(comment, commentId);
     }
 }
