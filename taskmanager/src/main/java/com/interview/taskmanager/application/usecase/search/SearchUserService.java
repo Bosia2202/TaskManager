@@ -44,7 +44,8 @@ public class SearchUserService {
         }
 
         public List<UserPreviewDto> getUsersByUsername(String username, Integer pageNumber) {
-                List<DatabaseUserDto> users = userPort.getUsersByUsername(username, pageNumber);
+                final Integer PAGE_SIZE = 10;
+                List<DatabaseUserDto> users = userPort.getUsersByUsername(username, pageNumber, PAGE_SIZE);
                 return users.stream().map(user -> new UserPreviewDto(user.id(), user.avatarUrl(), user.username()))
                                 .toList();
         }

@@ -31,7 +31,7 @@ public class UpdateAccountService {
         }
         User user = new User(databaseUser.id(), databaseUser.email(), avatarPort.uploadAvatarImg(image),
                 databaseUser.username(), databaseUser.password());
-        userPort.updateUser(user);
+        userPort.update(user);
     }
 
     private DatabaseUserDto getUserFromDatabaseById(Integer id) {
@@ -44,7 +44,7 @@ public class UpdateAccountService {
         DatabaseUserDto databaseUser = getUserFromDatabaseById(currentUserId);
         User user = new User(databaseUser.id(), databaseUser.email(), databaseUser.avatarUrl(), newUsername,
                 databaseUser.password());
-        userPort.updateUser(user);
+        userPort.update(user);
     }
 
     public void updatePassword(char[] oldPassword, char[] newPassword) {
@@ -57,7 +57,7 @@ public class UpdateAccountService {
         String updatedPassword = securityPort.encryptPassword(newPassword);
         User user = new User(currentUserId, databaseUser.email(), databaseUser.avatarUrl(), databaseUser.username(),
                 updatedPassword);
-        userPort.updateUser(user);
+        userPort.update(user);
     }
 
 }

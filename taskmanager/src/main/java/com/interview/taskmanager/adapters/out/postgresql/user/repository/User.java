@@ -43,6 +43,14 @@ class User implements AuthenticateUser {
     @Column(nullable = false)
     private Role role;
 
+    public User(String email, String avatarUrl, String username, String password, String role) {
+        this.email = email;
+        this.avatarUrl = avatarUrl;
+        this.username = username;
+        this.password = password;
+        this.role = Role.valueOf(role);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
