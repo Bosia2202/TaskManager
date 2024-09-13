@@ -8,7 +8,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class EmailPasswordAuthenticationProvider implements AuthenticationProvider {
@@ -25,19 +24,19 @@ public class EmailPasswordAuthenticationProvider implements AuthenticationProvid
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String email = authentication.getName();
         String password = authentication.getCredentials().toString();
-        if (isValidEmailAndPassword(email, password)) {
+        AuthenticateUser user = userDetailsService.loadUserByEmail(email);
+        if (isValidPassword(email, password)) {
             List<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            authorities.addAll(user.getAuthorities());
             return new EmailPasswordAuthenticationToken(email, password, authorities);
         } else {
             throw new BadCredentialsException("Invalid email or password");
         }
     }
 
-    private boolean isValidEmailAndPassword(String email, String password) {
-        AuthenticateUser user = userDetailsService.getAuthUserByEmail(email);
+    private boolean isValidPassword(String validPassword, String password) {
         String encryptedPassword = passwordEncoder.encode(password);
-        return encryptedPassword.equals(user.getPassword());
+        return encryptedPassword.equals(validPassword);
     }
 
     public void setUserDetailsService(UserDetailsService userDetailsService) {

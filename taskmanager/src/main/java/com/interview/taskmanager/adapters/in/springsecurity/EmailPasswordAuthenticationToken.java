@@ -24,7 +24,7 @@ public class EmailPasswordAuthenticationToken extends AbstractAuthenticationToke
         this.principal = principal;
         this.credentials = credentials;
         this.setAuthenticated(true);
-    } //TODO:Посмотреть что нужно сделать с GrantedAuthority
+    }
 
     @Override
     public Object getCredentials() {
@@ -50,4 +50,14 @@ public class EmailPasswordAuthenticationToken extends AbstractAuthenticationToke
         super.eraseCredentials();
         this.credentials = null;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((principal == null) ? 0 : principal.hashCode());
+        result = prime * result + ((credentials == null) ? 0 : credentials.hashCode());
+        return result;
+    }
+    
 }

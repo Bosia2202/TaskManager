@@ -1,6 +1,7 @@
 package com.interview.taskmanager.application.ports.in;
 
 import com.interview.taskmanager.application.dto.DatabaseUserDto;
+import com.interview.taskmanager.application.dto.SignIn;
 
 public interface SecurityPort {
 
@@ -10,7 +11,7 @@ public interface SecurityPort {
 
     String encryptPassword(char[] password);
 
-    boolean authentication(DatabaseUserDto databaseUser);
+    boolean authentication(SignIn signIn);
 
     String generateToken();
 

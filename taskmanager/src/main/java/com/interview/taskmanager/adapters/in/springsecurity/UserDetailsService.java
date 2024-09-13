@@ -2,6 +2,6 @@ package com.interview.taskmanager.adapters.in.springsecurity;
 
 public interface UserDetailsService {
 
-    AuthenticateUser getAuthUserByEmail(String email);
+    AuthenticateUser loadUserByEmail(String email);
 
 }

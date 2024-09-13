@@ -3,12 +3,12 @@ package com.interview.taskmanager.adapters.in.springsecurity;
 import java.nio.CharBuffer;
 
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.interview.taskmanager.application.dto.DatabaseUserDto;
+import com.interview.taskmanager.adapters.in.springsecurity.jwt.JwtGenerator;
+import com.interview.taskmanager.application.dto.SignIn;
 import com.interview.taskmanager.application.ports.in.SecurityPort;
 import com.interview.taskmanager.domain.User;
 
@@ -18,9 +18,13 @@ public class SpringSecurityAdapter implements SecurityPort {
 
     private final AuthenticationManager authenticationManager;
 
-    public SpringSecurityAdapter(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    private final JwtGenerator jwtGenerator;
+
+    public SpringSecurityAdapter(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
+            JwtGenerator jwtGenerator) {
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.jwtGenerator = jwtGenerator;
     }
 
     @Override
@@ -44,18 +48,19 @@ public class SpringSecurityAdapter implements SecurityPort {
     }
 
     @Override
-    public boolean authentication(DatabaseUserDto databaseUser) {
-        EmailPasswordAuthenticationToken authenticationToken = new EmailPasswordAuthenticationToken(
-                databaseUser.email(), databaseUser.password());
+    public boolean authentication(SignIn signIn) {
+        EmailPasswordAuthenticationToken authenticationToken = new EmailPasswordAuthenticationToken(signIn.email(),
+                signIn.password());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return true; //TODO: Можно убрать boolean
+        return true;
     }
 
     @Override
     public String generateToken() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'generateToken'");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String jwtToken = jwtGenerator.generate(authentication);
+        return "Bearer " + jwtToken;
     }
 
 }
