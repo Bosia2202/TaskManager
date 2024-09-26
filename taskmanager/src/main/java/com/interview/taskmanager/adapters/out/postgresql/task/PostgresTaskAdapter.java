@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.interview.taskmanager.adapters.out.postgresql.task.repository.TaskRepository;
-import com.interview.taskmanager.application.dto.NewTaskDto;
-import com.interview.taskmanager.application.dto.TaskPreviewDto;
+import com.interview.taskmanager.application.dto.DatabaseTaskDto;
 import com.interview.taskmanager.application.ports.out.TaskPort;
+import com.interview.taskmanager.domain.Task;
 
 public class PostgresTaskAdapter implements TaskPort {
 
@@ -17,28 +17,41 @@ public class PostgresTaskAdapter implements TaskPort {
     }
 
     @Override
-    public void create(NewTaskDto taskDto, Integer authorId) {
-        taskRepository.create(taskDto, authorId);
+    public void create(Task task) {
+        DatabaseTaskDto databaseTaskDto = new DatabaseTaskDto(null, task.getTitle(), task.getDescription(), 
+            task.getStatus(),task.getStatus(), task.getAuthorId());
+        taskRepository.create(databaseTaskDto);
     }
 
     @Override
-    public void updateTitle(Integer taskId, String newTitle) {
-        taskRepository.updateTitle(newTitle, taskId);
+    public Optional<DatabaseTaskDto> getTaskById(Integer taskId) {
+        return taskRepository.getTaskById(taskId);
     }
 
     @Override
-    public void updateDescription(Integer taskId, String description) {
-        taskRepository.updateDescription(description, taskId);
+    public List<DatabaseTaskDto> getTasksByTitle(String title, Integer pageNumber, Integer pageSize) {
+        return taskRepository.getTasksByTitle(title, pageNumber, pageSize);
     }
 
     @Override
-    public void updateStatus(Integer taskId, TaskStatus status) {
-        taskRepository.updateStatus(status, taskId);
+    public List<DatabaseTaskDto> getCustomTasksByUserId(Integer userId) {
+        return taskRepository.getAllCustomTasksByAuthorId(userId);
     }
 
     @Override
-    public void updatePriority(Integer taskId, TaskPriority priority) {
-        taskRepository.updatePriority(priority, taskId);
+    public List<DatabaseTaskDto> getExecutedTasksByUserId(Integer userId) {
+        return taskRepository.getAllExecuteTaskByUserId(userId);
+    }
+
+    @Override
+    public Integer getAuthorId(Integer taskId) {
+        return taskRepository.getAuthorId(taskId);
+    }
+
+    @Override
+    public void update(Task task) {        
+        DatabaseTaskDto databaseTaskDto = new DatabaseTaskDto(task.getId(), task.getTitle(), task.getDescription(), task.getStatus(), task.getPriority(), task.getAuthorId());
+        taskRepository.update(databaseTaskDto);
     }
 
     @Override
@@ -54,16 +67,6 @@ public class PostgresTaskAdapter implements TaskPort {
     @Override
     public boolean removeExecutor(Integer executorId, Integer taskId) {
         return taskRepository.removeExecutor(executorId, taskId);
-    }
-
-    @Override
-    public Optional<TaskPresentationDto> getTaskById(Integer taskId) {
-        return taskRepository.getTaskById(taskId);
-    }
-
-    @Override
-    public List<TaskPreviewDto> getTasksByTitle(String title, Integer pageNumber, Integer pageSize) {
-        return taskRepository.getTasksByTitle(title, pageNumber, pageSize);
     }
 
 }

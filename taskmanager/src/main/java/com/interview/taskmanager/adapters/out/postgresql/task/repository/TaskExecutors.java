@@ -9,26 +9,16 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "tasks")
 @Data
-class Task {
+@Table(name = "task_executors")
+class TaskExecutors {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false)
-    private String description;
-
-    @Column(nullable = false)
-    private Integer status;
-
-    @Column(nullable = false)
-    private Integer priority;
-
-    @Column(nullable = false)
-    private Integer authorId;
-
+    @Column(name = "task_id", nullable = false)
+    private Integer taskId; 
+    
+    @Column(name = "executor_id", nullable = false)
+    private Integer executorId;
 }

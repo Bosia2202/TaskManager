@@ -4,6 +4,7 @@ import com.interview.taskmanager.application.dto.NewTaskDto;
 import com.interview.taskmanager.application.ports.in.SecurityPort;
 import com.interview.taskmanager.application.ports.out.TaskPort;
 import com.interview.taskmanager.domain.Task;
+import com.interview.taskmanager.infra.exception.TaskCreateRuntimeException;
 
 public class CreateTaskService {
 
@@ -19,7 +20,11 @@ public class CreateTaskService {
     public void create(NewTaskDto newTaskDto) {
         Integer currentUserId = securityPort.getCurrentUserId();
         Task task = new Task(newTaskDto.title(),newTaskDto.description(), newTaskDto.status(), newTaskDto.priority(), currentUserId);
-        taskPort.create(task);
+        try {
+            taskPort.create(task);
+        } catch (Exception e) {
+            throw new TaskCreateRuntimeException(String.format("Task {title = %s, authorId = %d} didn't created. Exception %s", task.getTitle(), task.getAuthorId(), e.getMessage()));
+        }
     }
 
 }
