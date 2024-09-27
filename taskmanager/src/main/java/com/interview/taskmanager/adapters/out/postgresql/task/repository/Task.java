@@ -31,4 +31,12 @@ class Task {
     @Column(nullable = false)
     private Integer authorId;
 
+    public Task(String title, String description, Integer status, Integer priority, Integer authorId) {
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.priority = priority;
+        this.authorId = authorId;
+    }
+
 }

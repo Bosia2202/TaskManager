@@ -11,5 +11,6 @@
         "taskid",
         "taskmanager",
         "Vasilenko"
-    ]
+    ],
+    "java.compile.nullAnalysis.mode": "automatic"
 }
