@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.interview.taskmanager.adapters.out.postgresql.comment.repository.CommentRepository;
 import com.interview.taskmanager.application.dto.DatabaseCommentDto;
+import com.interview.taskmanager.application.dto.DatabaseCreateSubCommentDto;
 import com.interview.taskmanager.application.dto.DatabaseSubCommentDto;
 import com.interview.taskmanager.application.ports.out.CommentPort;
 import com.interview.taskmanager.domain.Comment;
@@ -28,9 +29,8 @@ public class PostgresCommentAdapter implements CommentPort {
 
     @Override
     public void saveSubComment(Comment comment, Integer commentId) {
-        DatabaseCommentDto databaseComment = new DatabaseCommentDto(comment.getId(), comment.getContent(),
-                comment.getAuthorId(), comment.getTaskId());
-        commentRepository.saveSubComment(databaseComment, commentId);
+        DatabaseCreateSubCommentDto subCommentDto = new DatabaseCreateSubCommentDto(comment.getContent(), comment.getAuthorId(), commentId);
+        commentRepository.saveSubComment(subCommentDto);
     }
 
     @Override
@@ -67,12 +67,12 @@ public class PostgresCommentAdapter implements CommentPort {
     public void update(Comment comment) {
         DatabaseCommentDto databaseComment = new DatabaseCommentDto(comment.getId(), comment.getContent(),
                 comment.getAuthorId(), comment.getTaskId());
-        commentRepository.update(databaseComment);
+        commentRepository.updateComment(databaseComment);
     }
 
     @Override
     public void remove(Integer commentId) {
-        commentRepository.removeById(commentId);
+        commentRepository.removeCommentById(commentId);
     }
 
     @Override

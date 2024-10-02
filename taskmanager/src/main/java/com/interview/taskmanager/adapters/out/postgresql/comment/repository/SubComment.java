@@ -2,10 +2,12 @@ package com.interview.taskmanager.adapters.out.postgresql.comment.repository;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "sub_comments")
 @Data
+@NoArgsConstructor
 class SubComment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

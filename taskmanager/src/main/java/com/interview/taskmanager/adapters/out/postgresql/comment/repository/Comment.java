@@ -2,6 +2,7 @@ package com.interview.taskmanager.adapters.out.postgresql.comment.repository;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import io.jsonwebtoken.lang.Collections;
 @Entity
 @Table(name = "comments")
 @Data
+@NoArgsConstructor
 class Comment {
 
     @Id

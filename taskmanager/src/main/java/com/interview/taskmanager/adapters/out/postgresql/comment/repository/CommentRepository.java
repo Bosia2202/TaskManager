@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 import com.interview.taskmanager.application.dto.DatabaseCommentDto;
 import com.interview.taskmanager.application.dto.DatabaseCreateSubCommentDto;
 import com.interview.taskmanager.application.dto.DatabaseSubCommentDto;
+import com.interview.taskmanager.infra.exception.SubCommentCreateRuntimeException;
+import com.interview.taskmanager.infra.exception.SubCommentUpdateRuntimeException;
+import com.interview.taskmanager.infra.exception.CommentUpdateRuntimeException;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -28,13 +31,33 @@ public class CommentRepository {
     }
 
     public void saveSubComment(DatabaseCreateSubCommentDto subCommentDto) {
-        Comment comment = entityManager.getReference(Comment.class, subCommentDto.commentId());
-        if(comment == null) { 
-            log.error(String.format("Sub comment wasn't be save, because comment [id = %d] doesn't exist", subCommentDto.commentId()));        
-            throw new NoResultException();
+        Comment comment = entityManager.find(Comment.class, subCommentDto.commentId());
+        if (comment == null) {
+            String message = String.format("Sub comment wasn't be save, because comment [id = %d] doesn't exist",
+                    subCommentDto.commentId());
+            log.error(message);
+            throw new SubCommentCreateRuntimeException(message);
         }
         SubComment subComment = new SubComment(subCommentDto.content(), subCommentDto.authorId(), comment);
         entityManager.persist(subComment);
+    }
+
+    public DatabaseCommentDto getCommentById(Integer commentId) {
+        TypedQuery<Comment> query = entityManager.createQuery(
+                "SELECT c FROM Comment c WHERE c.id = :commentId", Comment.class);
+        query.setParameter("commentId", commentId);
+        Comment comment = query.getSingleResult();
+        return new DatabaseCommentDto(comment.getId(), comment.getContent(),
+                comment.getAuthorId(), comment.getTaskId());
+    }
+
+    public DatabaseSubCommentDto getSubCommentById(Integer subCommentId) {
+        TypedQuery<SubComment> query = entityManager.createQuery(
+                "SELECT s FROM SubComment s JOIN FETCH s.comment WHERE s.id = :subCommentId", SubComment.class);
+        query.setParameter("subCommentId", subCommentId);
+        SubComment subComment = query.getSingleResult();
+        return new DatabaseSubCommentDto(subComment.getId(), subComment.getContent(),
+                subComment.getAuthorId(), subComment.getComment().getId());
     }
 
     public List<DatabaseCommentDto> getCommentsByTaskId(Integer taskId, Integer pageNumber, Integer pageSize) {
@@ -62,24 +85,6 @@ public class CommentRepository {
                 .toList();
     }
 
-    public DatabaseCommentDto getCommentById(Integer commentId) {
-        TypedQuery<Comment> query = entityManager.createQuery(
-                "SELECT c FROM Comment c WHERE c.id = :commentId", Comment.class);
-        query.setParameter("commentId", commentId);
-        Comment comment = query.getSingleResult();
-        return new DatabaseCommentDto(comment.getId(), comment.getContent(),
-                comment.getAuthorId(), comment.getTaskId());
-    }
-
-    public DatabaseSubCommentDto getSubCommentById(Integer subCommentId) {
-        TypedQuery<SubComment> query = entityManager.createQuery(
-                "SELECT s FROM SubComment s JOIN FETCH s.comment WHERE s.id = :subCommentId", SubComment.class);
-        query.setParameter("subCommentId", subCommentId);
-        SubComment subComment = query.getSingleResult();
-        return new DatabaseSubCommentDto(subComment.getId(), subComment.getContent(),
-                subComment.getAuthorId(), subComment.getComment().getId());
-    }
-
     public Integer getAuthorIdByCommentId(Integer commentId) {
         TypedQuery<Integer> query = entityManager
                 .createQuery("SELECT c.authorId FROM Comment c WHERE c.id = :commentId", Integer.class);
@@ -87,21 +92,37 @@ public class CommentRepository {
         return query.getSingleResult();
     }
 
-    public void update(DatabaseCommentDto databaseComment) {
+    public Integer getAuthorIdBySubCommentId(Integer subCommentId) {
+        TypedQuery<Integer> query = entityManager
+                .createQuery("SELECT sc.authorId FROM SubComment sc WHERE sc.id = :subCommentId", Integer.class)
+                .setParameter("subCommentId", subCommentId);
+        return query.getSingleResult();
+    }
+
+    public void updateComment(DatabaseCommentDto databaseComment) {
         Comment comment = entityManager.find(Comment.class, databaseComment.id());
         if (comment == null) {
-            throw new NoResultException("Comment wasn't found");
+            throw new CommentUpdateRuntimeException("Comment wasn't found");
         }
         comment.setContent(databaseComment.content());
         entityManager.merge(comment);
     }
 
-    public void removeById(Integer commentId) {
+    public void updateSubComment(DatabaseSubCommentDto databaseSubCommentDto) {
+        SubComment subComment = entityManager.find(SubComment.class, databaseSubCommentDto.id());
+        if (subComment == null) {
+            throw new SubCommentUpdateRuntimeException("SubComment wasn't found");
+        }
+        subComment.setContent(databaseSubCommentDto.content());
+        entityManager.merge(subComment);
+    }
+
+    public void removeCommentById(Integer commentId) {
         Comment comment = entityManager.find(Comment.class, commentId);
         if (comment == null) {
             throw new NoResultException("No comment found and not deleted.");
         }
-        entityManager.remove(commentId);
+        entityManager.remove(comment);
     }
 
     public void removeSubCommentById(Integer subCommentId) {

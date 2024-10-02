@@ -5,4 +5,5 @@ INSERT INTO
         author_id,
         task_id
     )
-VALUES (1, 'Content', 1, 1);
+VALUES (1, 'Content', 1, 1),
+    (2, 'Content2', 2, 1);

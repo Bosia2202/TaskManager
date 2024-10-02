@@ -5,27 +5,18 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import com.interview.taskmanager.adapters.in.springsecurity.AuthenticateUser;
-import com.interview.taskmanager.adapters.in.springsecurity.UserDetailsService;
 import com.interview.taskmanager.adapters.out.postgresql.user.repository.UserRepository;
 import com.interview.taskmanager.application.dto.DatabaseUserDto;
 import com.interview.taskmanager.application.ports.out.UserPort;
 import com.interview.taskmanager.domain.User;
-import com.interview.taskmanager.infra.exception.UserNotFoundRuntimeException;
 
 @Repository
-public class PostgresUserAdapter implements UserPort, UserDetailsService {
+public class PostgresUserAdapter implements UserPort {
 
     private final UserRepository userRepository;
 
     public PostgresUserAdapter(UserRepository userRepository) {
         this.userRepository = userRepository;
-    }
-
-    @Override
-    public AuthenticateUser loadUserByEmail(String email) {
-        return userRepository.loadUserByEmail(email)
-                .orElseThrow(() -> new UserNotFoundRuntimeException("User with this email wasn't found"));
     }
 
     @Override
